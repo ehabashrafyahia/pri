@@ -32,7 +32,7 @@
                 <div class="w-16 h-16 bg-amber-600/20 text-amber-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 border border-amber-500/30">
                     🔑
                 </div>
-                <h2 class="text-2xl font-bold text-white">تسجيل دخول الطالب</h2>
+                <h2 class="text-2xl font-bold text-white">تسجيل الدخول</h2>
                 <p class="text-slate-400 text-sm mt-1">أدخل اسم المستخدم وكلمة السر الخاصة بك</p>
             </div>
 
@@ -68,14 +68,13 @@
         © 2026 منصة الدراسات الاجتماعية - جميع الحقوق محفوظة.
     </footer>
 
-    <!-- سكربت التحقق من الحسابات والصفوف -->
+    <!-- سكربت التحقق من الحسابات والصفوف برتبة الحساب -->
     <script>
-        // قائمة الطلاب مع تحديد الصف الدراسي لكل طالب
-        const allowedStudents = [
-            { username: "student4", pass: "123456", name: "أحمد علي", grade: "p4" }, // رابعة ابتدائي
-            { username: "student5", pass: "123456", name: "محمود حسن", grade: "p5" }, // خامسة ابتدائي
-            { username: "prep1", pass: "123456", name: "عمر خالد", grade: "prep1" }, // أولى إعدادي
-            { username: "ehab", pass: "2026", name: "أستاذ إيهاب", grade: "p4" }      // رابعة ابتدائي
+        // قائمة الحسابات المسموح لها بالدخول (معلمين وطلاب)
+        const allowedUsers = [
+            { username: "ehab", pass: "2026", name: "أستاذ إيهاب أشرف", role: "admin" }, // حساب الأدمن الخاص بك
+            { username: "student4", pass: "123456", name: "أحمد علي", grade: "p4", role: "student" }, // طالب رابعة
+            { username: "student5", pass: "123456", name: "محمود حسن", grade: "p5", role: "student" }  // طالب خامسة
         ];
 
         function validateStudentLogin(event) {
@@ -85,17 +84,24 @@
             const passInput = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('error-msg');
 
-            const foundStudent = allowedStudents.find(
-                s => s.username === userInput && s.pass === passInput
+            const foundUser = allowedUsers.find(
+                u => u.username === userInput && u.pass === passInput
             );
 
-            if (foundStudent) {
-                // حفظ الاسم والصف الدراسي في ذاكرة المتصفح
-                localStorage.setItem('studentName', foundStudent.name);
-                localStorage.setItem('studentGrade', foundStudent.grade);
-                
-                // التوجيه إلى لوحة الطالب
-                window.location.href = 'dashboard.html';
+            if (foundUser) {
+                // حفظ البيانات في ذكرة المتصفح
+                localStorage.setItem('userName', foundUser.name);
+                localStorage.setItem('userRole', foundUser.role);
+
+                if (foundUser.role === "admin") {
+                    // توجيه المعلم لوحة التحكم الرئيسية
+                    window.location.href = 'admin.html';
+                } else {
+                    // توجيه الطالب إلى لوحة دروسه المخصصة
+                    localStorage.setItem('studentName', foundUser.name);
+                    localStorage.setItem('studentGrade', foundUser.grade);
+                    window.location.href = 'dashboard.html';
+                }
             } else {
                 errorMsg.classList.remove('hidden');
             }
