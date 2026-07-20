@@ -14,12 +14,20 @@
 <body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
 
     <!-- شريط الملاحة (Navbar) -->
-    <nav class="flex justify-between items-center px-8 py-5 border-b border-slate-800">
-        <div class="flex items-center space-x-3 space-x-reverse">
+    <nav class="flex justify-between items-center px-6 md:px-12 py-5 border-b border-slate-800">
+        <a href="index.html" class="flex items-center space-x-3 space-x-reverse">
             <div class="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center text-xl font-bold">🌍</div>
             <span class="text-xl font-bold tracking-wide">منصة <span class="text-amber-500">الدراسات الاجتماعية</span></span>
+        </a>
+
+        <!-- روابط الملاحة السريعة -->
+        <div class="hidden md:flex items-center space-x-6 space-x-reverse text-sm font-medium text-slate-300">
+            <a href="index.html" class="hover:text-amber-500 transition-all text-amber-500">الرئيسية</a>
+            <a href="dashboard.html" class="hover:text-amber-500 transition-all">لوحة الطالب</a>
+            <a href="leaderboard.html" class="hover:text-amber-500 transition-all">🏆 المتصدرون</a>
         </div>
-        <a href="#login" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-lg font-medium transition-all">
+
+        <a href="login.html" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-lg font-medium transition-all shadow-md shadow-amber-600/20">
             دخول الطالب ←
         </a>
     </nav>
@@ -36,36 +44,36 @@
             شرح مبسط للخرائط الجغرافية، والدروس التاريخية، مع بنك أسئلة واختبارات تفاعلية ومتابعة مستمرة.
         </p>
         <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="#login" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3.5 rounded-xl text-lg font-bold transition-all shadow-lg shadow-amber-600/20">
+            <a href="login.html" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3.5 rounded-xl text-lg font-bold transition-all shadow-lg shadow-amber-600/20">
                 🚀 ابدأ التعلم الآن
             </a>
             <a href="#features" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-8 py-3.5 rounded-xl text-lg font-bold transition-all">
-                استكشف أقسام المادة ↓
+                استكشف مميزات المنصة ↓
             </a>
         </div>
     </section>
 
     <!-- قسم مميزات المادة (Features) -->
-    <section id="features" class="container mx-auto px-6 py-12">
+    <section id="features" class="container mx-auto px-6 py-12 border-t border-slate-800/60">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <div class="bg-slate-800/50 border border-slate-700/50 p-6 rounded-2xl">
-                <div class="text-3xl mb-4">🗺️</div>
-                <h3 class="text-xl font-bold mb-2">خرائط وتبسيط</h3>
-                <p class="text-slate-400">شرح تفاعلي للخرائط الجغرافية والتضاريس بطريقة سهلة للحفظ والفهم.</p>
-            </div>
+            <a href="dashboard.html" class="bg-slate-800/50 border border-slate-700/50 hover:border-amber-500/50 p-6 rounded-2xl transition-all group">
+                <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">🗺️</div>
+                <h3 class="text-xl font-bold mb-2 text-white group-hover:text-amber-500 transition-colors">خرائط وتبسيط</h3>
+                <p class="text-slate-400 text-sm">شرح تفاعلي للخرائط الجغرافية والتضاريس بطريقة سهلة للحفظ والفهم.</p>
+            </a>
 
-            <div class="bg-slate-800/50 border border-slate-700/50 p-6 rounded-2xl">
-                <div class="text-3xl mb-4">📜</div>
-                <h3 class="text-xl font-bold mb-2">تاريخ وحضارات</h3>
-                <p class="text-slate-400">ربط الأحداث التاريخية والتواريخ بشكل منظم يسهل استيعابه.</p>
-            </div>
+            <a href="dashboard.html" class="bg-slate-800/50 border border-slate-700/50 hover:border-amber-500/50 p-6 rounded-2xl transition-all group">
+                <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📜</div>
+                <h3 class="text-xl font-bold mb-2 text-white group-hover:text-amber-500 transition-colors">تاريخ وحضارات</h3>
+                <p class="text-slate-400 text-sm">ربط الأحداث التاريخية والتواريخ بشكل منظم يسهل استيعابه.</p>
+            </a>
 
-            <div class="bg-slate-800/50 border border-slate-700/50 p-6 rounded-2xl">
-                <div class="text-3xl mb-4">📝</div>
-                <h3 class="text-xl font-bold mb-2">امتحانات تفاعلية</h3>
-                <p class="text-slate-400">اختبارات بعد كل درس لقياس مستوى الفهم وإظهار النتيجة فوراً.</p>
-            </div>
+            <a href="leaderboard.html" class="bg-slate-800/50 border border-slate-700/50 hover:border-amber-500/50 p-6 rounded-2xl transition-all group">
+                <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">🏆</div>
+                <h3 class="text-xl font-bold mb-2 text-white group-hover:text-amber-500 transition-colors">لوحة المتصدرين</h3>
+                <p class="text-slate-400 text-sm">منافسة مباشرة مع زملائك بناءً على الدرجات وسرعة حل الاختبارات.</p>
+            </a>
 
         </div>
     </section>
