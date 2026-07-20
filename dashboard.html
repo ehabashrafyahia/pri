@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - منصة الدراسات الاجتماعية</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
+
+    <!-- شريط الملاحة -->
+    <nav class="flex justify-between items-center px-6 md:px-12 py-5 border-b border-slate-800 bg-slate-900/90 sticky top-0 backdrop-blur-md z-50">
+        <a href="index.html" class="flex items-center space-x-3 space-x-reverse">
+            <div class="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center text-xl font-bold">🌍</div>
+            <span class="text-xl font-bold tracking-wide">منصة <span class="text-amber-500">الدراسات</span></span>
+        </a>
+
+        <div class="flex items-center space-x-4 space-x-reverse">
+            <span id="student-welcome" class="text-slate-300 font-medium text-sm hidden md:inline">
+                أهلاً بك 👋
+            </span>
+            <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm transition-all border border-slate-700">
+                تسجيل الخروج
+            </button>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="container mx-auto px-6 py-8 flex-1">
+        
+        <!-- الهيدر الترحيبي -->
+        <div class="bg-gradient-to-r from-amber-600/20 to-slate-800 border border-amber-500/30 rounded-2xl p-6 md:p-8 mb-8">
+            <h1 class="text-2xl md:text-3xl font-black mb-2">
+                مرحباً بك، <span id="student-name-display" class="text-amber-500">طالبنا العزيز</span> 🚀
+            </h1>
+            <p class="text-slate-400 text-sm md:text-base">
+                مرحباً بك في لوحة التعلم الخاصة بك. اختر الدرس أو الاختبار للبدء فوراً.
+            </p>
+        </div>
+
+        <!-- الأقسام التعليمية -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- قسم الجغرافيا -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span>🗺️</span> دروس الجغرافيا والخرائط
+                    </h2>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- كارت درس 1 -->
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 hover:border-amber-500/50 transition-all">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="bg-amber-900/40 text-amber-400 text-xs px-2.5 py-1 rounded-md border border-amber-500/30 mb-2 inline-block">الدرس الأول</span>
+                                <h3 class="text-lg font-bold">موقع وطننا العربي وحدوده</h3>
+                            </div>
+                            <span class="text-slate-400 text-xs">⏱️ 25 دقيقة</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-4">شرح تفصيلي للموقع الجغرافي والفلكي وأهميته الاستراتيجية.</p>
+                        <div class="flex gap-3">
+                            <button onclick="alert('جاري تشغيل الفيديو...')" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                مشاهدة الشرح ▶
+                            </button>
+                            <a href="quiz.html" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                دخول الاختبار 📝
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- كارت درس 2 -->
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 hover:border-amber-500/50 transition-all">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="bg-amber-900/40 text-amber-400 text-xs px-2.5 py-1 rounded-md border border-amber-500/30 mb-2 inline-block">الدرس الثاني</span>
+                                <h3 class="text-lg font-bold">تضاريس وطننا العربي</h3>
+                            </div>
+                            <span class="text-slate-400 text-xs">⏱️ 30 دقيقة</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-4">شرح الجبال والهضاب والسهول مع خريطة تفاعلية توضيحية.</p>
+                        <div class="flex gap-3">
+                            <button onclick="alert('جاري تشغيل الفيديو...')" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                مشاهدة الشرح ▶
+                            </button>
+                            <a href="quiz.html" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                دخول الاختبار 📝
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم التاريخ -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span>📜</span> دروس التاريخ والحضارات
+                    </h2>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- كارت درس 1 -->
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 hover:border-amber-500/50 transition-all">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="bg-amber-900/40 text-amber-400 text-xs px-2.5 py-1 rounded-md border border-amber-500/30 mb-2 inline-block">الدرس الأول</span>
+                                <h3 class="text-lg font-bold">مصر قبل الإسلام وحضارات المنطقة</h3>
+                            </div>
+                            <span class="text-slate-400 text-xs">⏱️ 20 دقيقة</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-4">نظرة عامة على أحوال شبه الجزيرة العربية ومصر قبل الفتح الإسلامي.</p>
+                        <div class="flex gap-3">
+                            <button onclick="alert('جاري تشغيل الفيديو...')" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                مشاهدة الشرح ▶
+                            </button>
+                            <a href="quiz.html" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                                دخول الاختبار 📝
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- التذييل -->
+    <footer class="text-center py-6 border-t border-slate-800 text-slate-500 text-sm mt-12">
+        © 2026 منصة الدراسات الاجتماعية - جميع الحقوق محفوظة.
+    </footer>
+
+    <!-- سكربت استدعاء اسم الطالب وتسجيل الخروج -->
+    <script>
+        // قراءة اسم الطالب المحفوظ من صفحة تسجيل الدخول
+        const savedName = localStorage.getItem('studentName');
+        if (savedName) {
+            document.getElementById('student-name-display').innerText = savedName;
+            document.getElementById('student-welcome').innerText = `أهلاً بك، ${savedName} 👋`;
+        }
+
+        function logout() {
+            localStorage.removeItem('studentName');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
