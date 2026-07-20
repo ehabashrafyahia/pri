@@ -68,13 +68,14 @@
         © 2026 منصة الدراسات الاجتماعية - جميع الحقوق محفوظة.
     </footer>
 
-    <!-- سكربت التحقق من الحسابات -->
+    <!-- سكربت التحقق من الحسابات والصفوف -->
     <script>
-        // قائمة الطلاب المسموح لهم بالدخول (يمكنك تعديلها وإضافة أي عدد)
+        // قائمة الطلاب مع تحديد الصف الدراسي لكل طالب
         const allowedStudents = [
-            { username: "student1", pass: "123456", name: "أحمد محمد" },
-            { username: "student2", pass: "123456", name: "محمود علي" },
-            { username: "ehab", pass: "2026", name: "أستاذ إيهاب" }
+            { username: "student4", pass: "123456", name: "أحمد علي", grade: "p4" }, // رابعة ابتدائي
+            { username: "student5", pass: "123456", name: "محمود حسن", grade: "p5" }, // خامسة ابتدائي
+            { username: "prep1", pass: "123456", name: "عمر خالد", grade: "prep1" }, // أولى إعدادي
+            { username: "ehab", pass: "2026", name: "أستاذ إيهاب", grade: "p4" }      // رابعة ابتدائي
         ];
 
         function validateStudentLogin(event) {
@@ -84,19 +85,18 @@
             const passInput = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('error-msg');
 
-            // البحث عن الطالب في القائمة
             const foundStudent = allowedStudents.find(
                 s => s.username === userInput && s.pass === passInput
             );
 
             if (foundStudent) {
-                // حفظ اسم الطالب في المتصفح لاستخدامه في لوحة التحكم
+                // حفظ الاسم والصف الدراسي في ذاكرة المتصفح
                 localStorage.setItem('studentName', foundStudent.name);
+                localStorage.setItem('studentGrade', foundStudent.grade);
                 
-                // التوجيه إلى لوحة التحكم
+                // التوجيه إلى لوحة الطالب
                 window.location.href = 'dashboard.html';
             } else {
-                // إظهار رسالة خطأ
                 errorMsg.classList.remove('hidden');
             }
         }
