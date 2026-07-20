@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة التعليم الذكي</title>
+    <!-- استدعاء مكتبة Tailwind CSS للتنسيق السريع -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
+
+    <!-- شريط الملاحة (Navbar) -->
+    <nav class="flex justify-between items-center px-8 py-5 border-b border-slate-800">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-xl font-bold">🎓</div>
+            <span class="text-xl font-bold tracking-wide">منصة <span class="text-indigo-400">التعليم</span></span>
+        </div>
+        <a href="#login" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-all">
+            دخول ←
+        </a>
+    </nav>
+
+    <!-- القسم الرئيسي (Hero Section) -->
+    <section class="container mx-auto px-6 py-16 text-center max-w-4xl">
+        <span class="bg-indigo-900/50 text-indigo-300 border border-indigo-700/50 text-sm px-4 py-1.5 rounded-full inline-block mb-6">
+            ✨ المنصة متاحة الآن
+        </span>
+        <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight">
+            تعلّم بذكاء، وحقّق <span class="text-indigo-400">المزيد</span>
+        </h1>
+        <p class="text-slate-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+            منصة تعليمية متكاملة تربط الطلاب بمحاضرات عالية الجودة، واختبارات تفاعلية، ومتابعة لحظية للتقدم الدراسي.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#login" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3.5 rounded-xl text-lg font-bold transition-all shadow-lg shadow-indigo-600/30">
+                🚀 ابدأ الآن
+            </a>
+            <a href="#features" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-8 py-3.5 rounded-xl text-lg font-bold transition-all">
+                استكشف المميزات ↓
+            </a>
+        </div>
+    </section>
+
+    <!-- قسم المميزات (Features Section) -->
+    <section id="features" class="container mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div class="bg-slate-800/50 border border-slate-700/50 p-6 rounded-2xl">
+                <div class="text-3xl mb-4">🎬</div>
+                <h3 class="text-xl font-bold mb-2">محاضرات مسجلة</h3>
+                <p class="text-slate-400">شرح مبسط وعميق لجميع الدروس والخرائط الذهنية بجودة عالية.</p>
+            </div>
+
+            <div class="bg-slate-800/50 border border-slate-700/50 p-6 rounded-2xl">
+                <div class="text-3xl mb-4">📝</div>
+                <h3 class="text-xl font-bold mb-2">بنك أسئلة واختبارات</h3>
+                <p class="text-slate-400">اختبارات تفاعلية شاملة بعد كل درس مع إظهار النتيجة فوراً.</p>
+            </div>
+
+            <div class="bg-slate-800/50 border border-slate-700/50 p-6 rounded-2xl">
+                <div class="text-3xl mb-4">🏆</div>
+                <h3 class="text-xl font-bold mb-2">لوحة المتصدرين</h3>
+                <p class="text-slate-400">تنافس مع زملائك وتابع ترتيبك الدوري بناءً على الدرجات.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- التذييل (Footer) -->
+    <footer class="text-center py-6 border-t border-slate-800 text-slate-500 text-sm">
+        © 2026 جميع الحقوق محفوظة.
+    </footer>
+
+</body>
+</html>
