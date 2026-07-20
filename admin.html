@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المعلم - منصة الدراسات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Tajawal', sans-serif; } </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center px-6 md:px-12 py-5 border-b border-slate-800 bg-slate-900/90">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div class="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center text-xl font-bold">⚙️</div>
+            <span class="text-xl font-bold">لوحة تحكم <span class="text-amber-500">المعلم</span></span>
+        </div>
+        <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm border border-slate-700">
+            تسجيل الخروج
+        </button>
+    </nav>
+
+    <!-- Main Admin Body -->
+    <main class="container mx-auto px-6 py-8 flex-1 max-w-5xl">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black text-amber-500">أهلاً بك، <span id="admin-name">أستاذ إيهاب</span> 👑</h1>
+                <p class="text-slate-400 text-sm mt-1">من هنا يمكنك إضافة الدروس والاختبارات التفاعلية للطلاب</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- 1. نموذج إضافة درس جديد -->
+            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-amber-400">
+                    <span>📹</span> إضافة درس فيديو جديد
+                </h2>
+                <form onsubmit="addLesson(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي</label>
+                        <select id="lesson-grade" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200">
+                            <option value="p4">الصف الرابع الابتدائي</option>
+                            <option value="p5">الصف الخامس الابتدائي</option>
+                            <option value="prep1">الصف الأول الإعدادي</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">اسم الدرس</label>
+                        <input type="text" id="lesson-title" required placeholder="مثال: أدوات تحديد الموقع" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">رابط الفيديو (YouTube)</label>
+                        <input type="url" id="lesson-url" placeholder="https://youtube.com/..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">وصف قصير للدرس</label>
+                        <textarea id="lesson-desc" rows="2" placeholder="اكتب ملخصاً بسيطاً للدرس..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 font-bold py-2.5 rounded-xl transition-all">
+                        حفظ ونشر الدرس 🚀
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. نموذج إنشاء سؤال جديد للاختبارات -->
+            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-amber-400">
+                    <span>📝</span> إضافة سؤال لاختبار إلكتروني
+                </h2>
+                <form onsubmit="addQuizQuestion(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">السؤال</label>
+                        <input type="text" id="q-text" required placeholder="مثال: تُستخدم وردة البوصلة في..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="q-opt1" required placeholder="الخيار الأول" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                        <input type="text" id="q-opt2" required placeholder="الخيار الثاني" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                        <input type="text" id="q-opt3" placeholder="الخيار الثالث" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                        <input type="text" id="q-opt4" placeholder="الخيار الرابع" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">الإجابة الصحيحة (اكتب الخيار الصحيح نصاً)</label>
+                        <input type="text" id="q-correct" required placeholder="الخيار الصحيح بالضبط" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-400 font-bold">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 font-bold py-2.5 rounded-xl transition-all">
+                        حفظ السؤال للاختبار 💾
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="text-center py-6 border-t border-slate-800 text-slate-500 text-sm">
+        © 2026 لوحة إدارة المنصة التعليمية
+    </footer>
+
+    <script>
+        // التأكد من أن المسجل أدمن
+        const role = localStorage.getItem('userRole');
+        const name = localStorage.getItem('userName');
+
+        if (role !== 'admin') {
+            alert('عذراً، هذه الصفحة مخصصة لمدير المنصة فقط!');
+            window.location.href = 'login.html';
+        } else if (name) {
+            document.getElementById('admin-name').innerText = name;
+        }
+
+        function addLesson(e) {
+            e.preventDefault();
+            alert('تم حفظ ونشر الدرس بنجاح!');
+            e.target.reset();
+        }
+
+        function addQuizQuestion(e) {
+            e.preventDefault();
+            alert('تمت إضافة السؤال بنجاح إلى بنك الأسئلة!');
+            e.target.reset();
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
