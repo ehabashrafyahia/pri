@@ -3,73 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة الطالب - منصة الدراسات الاجتماعية</title>
-    <!-- Tailwind CSS CDN -->
+    <title>لوحة الطالب - منصة أطلس التعليمية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Tajawal', sans-serif; }
-    </style>
+    <style> body { font-family: 'Tajawal', sans-serif; } </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between">
 
-    <!-- شريط الملاحة -->
-    <nav class="flex justify-between items-center px-6 md:px-12 py-5 border-b border-slate-800 bg-slate-900/90 sticky top-0 backdrop-blur-md z-50">
-        <a href="dashboard.html" class="flex items-center space-x-3 space-x-reverse">
-            <div class="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center text-xl font-bold">🌍</div>
-            <span class="text-xl font-bold tracking-wide">منصة <span class="text-amber-500">الدراسات</span></span>
-        </a>
-
+    <nav class="flex justify-between items-center px-6 md:px-12 py-5 border-b border-slate-900 bg-slate-950/90 sticky top-0 backdrop-blur-md z-50">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div class="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center text-xl font-bold">🌍</div>
+            <span class="text-xl font-bold">منصة <span class="text-amber-500">أطلس</span></span>
+        </div>
         <div class="flex items-center space-x-4 space-x-reverse">
-            <span id="student-welcome" class="text-slate-300 font-medium text-sm hidden md:inline">
-                أهلاً بك 👋
-            </span>
-            <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm transition-all border border-slate-700">
+            <span id="student-welcome" class="text-slate-300 font-medium text-sm hidden md:inline">أهلاً بك 👋</span>
+            <button onclick="logout()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold border border-slate-800 transition-all">
                 تسجيل الخروج
             </button>
         </div>
     </nav>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="container mx-auto px-6 py-8 flex-1">
-        
-        <!-- الهيدر الترحيبي -->
-        <div class="bg-gradient-to-r from-amber-600/20 to-slate-800 border border-amber-500/30 rounded-2xl p-6 md:p-8 mb-8 flex flex-col md:flex-row justify-between md:items-center gap-4">
+    <main class="container mx-auto px-6 py-8 flex-1 max-w-4xl">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 mb-8 flex flex-col md:flex-row justify-between md:items-center gap-4 shadow-xl">
             <div>
-                <h1 class="text-2xl md:text-3xl font-black mb-1">
-                    مرحباً بك، <span id="student-name-display" class="text-amber-500">طالبنا العزيز</span> 🚀
-                </h1>
-                <p class="text-slate-400 text-sm">
-                    تابع دروسك واختباراتك المضافة حديثاً.
-                </p>
+                <h1 class="text-2xl font-black mb-1">مرحباً بك، <span id="student-name-display" class="text-amber-500">طالبنا العزيز</span> 🚀</h1>
+                <p class="text-slate-400 text-sm">اختر الدرس لمشاهدة الشرح وحل الأسئلة التفاعلية.</p>
             </div>
             <div>
-                <span id="grade-badge" class="bg-amber-600/30 text-amber-300 border border-amber-500/50 px-4 py-2 rounded-xl text-sm font-bold inline-block">
-                    الصف الرابع الابتدائي 🎒
+                <span id="grade-badge" class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-4 py-2 rounded-xl text-xs font-bold inline-block">
+                    الصف الدراسي 🎒
                 </span>
             </div>
         </div>
 
-        <!-- قائمة الدروس الديناميكية -->
+        <h2 class="text-lg font-bold mb-4 text-slate-200">الدروس المتاحة لصفك:</h2>
         <div id="lessons-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- سيتم إضافة الدروس هنا تلقائياً عندما تضيفها من لوحة الأدمن -->
+            <!-- الدروس تظهر هنا -->
         </div>
 
-        <!-- رسالة تُعرض إذا لم تقم بإضافة أي درس بعد -->
-        <div id="no-lessons-msg" class="text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-700/50">
-            <div class="text-5xl mb-4">📚</div>
-            <h3 class="text-xl font-bold mb-2">لا توجد دروس مضافة حالياً</h3>
-            <p class="text-slate-400 text-sm">قم بتسجيل الدخول كمعلم لإضافة الدروس والاختبارات المخصصة للطلاب.</p>
+        <div id="no-lessons-msg" class="hidden text-center py-16 bg-slate-900/40 rounded-3xl border border-slate-800">
+            <div class="text-5xl mb-3">📚</div>
+            <h3 class="text-lg font-bold mb-1">لا توجد دروس مضافة حالياً</h3>
+            <p class="text-slate-400 text-xs">سيتم إضافة الدروس والأسئلة قريباً من قبل المعلم.</p>
         </div>
-
     </main>
 
-    <!-- التذييل -->
-    <footer class="text-center py-6 border-t border-slate-800 text-slate-500 text-sm mt-12">
-        © 2026 منصة الدراسات الاجتماعية - جميع الحقوق محفوظة.
+    <footer class="text-center py-6 border-t border-slate-900 text-slate-500 text-xs mt-12">
+        © 2026 منصة أطلس التعليمية - جميع الحقوق محفوظة.
     </footer>
 
-    <!-- سكربت الحماية وقراءة البيانات -->
     <script>
         const savedName = localStorage.getItem('userName') || localStorage.getItem('studentName');
         const savedGrade = localStorage.getItem('studentGrade') || 'p4';
@@ -86,7 +68,7 @@
         else if (savedGrade === 'p5') gradeBadge.innerText = 'الصف الخامس الابتدائي 🎒';
         else gradeBadge.innerText = 'الصف الأول الإعدادي 🎒';
 
-        function loadLessons() {
+        function loadDashboardLessons() {
             const lessons = JSON.parse(localStorage.getItem('customLessons') || '[]');
             const container = document.getElementById('lessons-container');
             const noLessonsMsg = document.getElementById('no-lessons-msg');
@@ -97,15 +79,18 @@
                 noLessonsMsg.classList.add('hidden');
                 container.innerHTML = '';
 
-                filteredLessons.forEach(lesson => {
+                filteredLessons.forEach((lesson, index) => {
                     container.innerHTML += `
-                        <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 hover:border-amber-500/40 transition-all">
-                            <span class="text-amber-400 text-xs font-bold block mb-1">درس جديد 📖</span>
-                            <h3 class="text-lg font-bold mb-2">${lesson.title}</h3>
-                            <p class="text-slate-400 text-sm mb-4">${lesson.desc || 'لا يوجد وصف مختصر.'}</p>
-                            <div class="flex gap-2">
-                                ${lesson.url ? `<a href="${lesson.url}" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-1.5 rounded-lg text-sm font-bold transition-all">مشاهدة الشرح ▶</a>` : ''}
-                                <a href="quiz.html" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3.5 py-1.5 rounded-lg text-sm font-bold transition-all">الامتحان 📝</a>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-amber-500/40 transition-all shadow-lg flex flex-col justify-between">
+                            <div>
+                                <span class="text-amber-400 text-xs font-bold block mb-1">درس متاح 📖</span>
+                                <h3 class="text-base font-bold mb-2 text-white">${lesson.title}</h3>
+                                <p class="text-slate-400 text-xs mb-4 leading-relaxed">${lesson.desc || 'اضغط لمشاهدة الشرح وحل التدريبات التفاعلية.'}</p>
+                            </div>
+                            <div class="flex gap-2 pt-3 border-t border-slate-800">
+                                <a href="lesson.html?id=${index}" class="w-full text-center bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md shadow-amber-600/20">
+                                    دخول الدرس والأسئلة 🎯
+                                </a>
                             </div>
                         </div>
                     `;
@@ -115,13 +100,10 @@
             }
         }
 
-        loadLessons();
+        loadDashboardLessons();
 
         function logout() {
-            localStorage.removeItem('userName');
-            localStorage.removeItem('userRole');
-            localStorage.removeItem('studentName');
-            localStorage.removeItem('studentGrade');
+            localStorage.clear();
             window.location.href = 'login.html';
         }
     </script>
