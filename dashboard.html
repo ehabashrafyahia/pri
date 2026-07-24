@@ -71,25 +71,21 @@
 
     <!-- سكربت الحماية وقراءة البيانات -->
     <script>
-        // 1. حماية الصفحة: التأكد من وجود تسجيل دخول
         const savedName = localStorage.getItem('userName') || localStorage.getItem('studentName');
         const savedGrade = localStorage.getItem('studentGrade') || 'p4';
 
         if (!savedName) {
-            // توجيه فوراً للوجن لو مفيش جلسة دخول
             window.location.href = 'login.html';
         } else {
             document.getElementById('student-name-display').innerText = savedName;
             document.getElementById('student-welcome').innerText = `أهلاً بك، ${savedName} 👋`;
         }
 
-        // عرض بادج الصف الدراسي
         const gradeBadge = document.getElementById('grade-badge');
         if (savedGrade === 'p4') gradeBadge.innerText = 'الصف الرابع الابتدائي 🎒';
         else if (savedGrade === 'p5') gradeBadge.innerText = 'الصف الخامس الابتدائي 🎒';
         else gradeBadge.innerText = 'الصف الأول الإعدادي 🎒';
 
-        // 2. قراءة وعرض الدروس المحفوظة
         function loadLessons() {
             const lessons = JSON.parse(localStorage.getItem('customLessons') || '[]');
             const container = document.getElementById('lessons-container');
@@ -122,7 +118,10 @@
         loadLessons();
 
         function logout() {
-            localStorage.clear();
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('studentName');
+            localStorage.removeItem('studentGrade');
             window.location.href = 'login.html';
         }
     </script>
