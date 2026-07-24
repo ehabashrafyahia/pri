@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة أطلس التعليمية</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Tajawal) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style> 
+        body { font-family: 'Tajawal', sans-serif; } 
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-8px) scale(1.03); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        .animate-float { animation: floatLogo 3s ease-in-out infinite; }
+        .animate-glow { animation: pulseGlow 3s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center overflow-hidden relative p-4">
+
+    <!-- خلفية مضيئة متجاوبة -->
+    <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-amber-600/10 rounded-full blur-3xl animate-glow -top-10 -right-10 pointer-events-none"></div>
+    <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-amber-500/10 rounded-full blur-3xl animate-glow -bottom-10 -left-10 pointer-events-none" style="animation-delay: 1.5s;"></div>
+
+    <!-- شاشة الـ Splash -->
+    <div id="splash-screen" class="inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center transition-all duration-700 px-4 text-center">
+        <div class="relative mb-6">
+            <div class="absolute inset-0 bg-amber-500/20 rounded-3xl blur-xl animate-glow"></div>
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-500 to-amber-700 rounded-3xl flex items-center justify-center text-4xl sm:text-5xl shadow-2xl border border-amber-400/30 animate-float">
+                🌍
+            </div>
+        </div>
+
+        <h1 class="text-2xl sm:text-4xl font-black tracking-wide mb-2">
+            منصة <span class="text-amber-500">أطلس</span> التعليمية
+        </h1>
+        <p class="text-slate-400 text-xs sm:text-sm tracking-wider uppercase mb-8">
+            بوابتك الذكية لدراسات اجتماعية ممتعة
+        </p>
+
+        <!-- شريط التحميل -->
+        <div class="w-44 sm:w-52 h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+            <div id="progress-bar" class="h-full bg-amber-500 w-0 transition-all duration-1500 rounded-full"></div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const progressBar = document.getElementById('progress-bar');
+            const splashScreen = document.getElementById('splash-screen');
+
+            // بدء ملء الشريط فور فتح الصفحة
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+            }, 100);
+
+            // بعد انتهاء الشريط (2.2 ثانية)، يتم الانتقال بسلاسة إلى صفحة تسجيل الدخول
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    window.location.href = 'login.html'; // الانتقال لصفحة تسجيل الدخول
+                }, 700);
+            }, 2200);
+        });
+    </script>
+</body>
+</html>
