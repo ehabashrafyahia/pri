@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة أطلس التعليمية - عرض الدرس</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-main flex flex-col justify-between min-h-screen">
+
+    <!-- شريط التنقل العلوي -->
+    <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-lg font-black text-amber-500">منصة أطلس التعليمية 📚</h1>
+            <a href="dashboard.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition-all">العودة للوحة التحكم 🏠</a>
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي للدرس -->
+    <main class="max-w-3xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- عنوان الدرس وشرحه -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl mb-8">
+            <span id="lesson-tag" class="bg-amber-500/10 text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20">شرح الدرس</span>
+            <h2 id="lesson-main-title" class="text-2xl md:text-3xl font-black mt-4 mb-4 text-white">جاري تحميل الدرس...</h2>
+            <div id="lesson-content-body" class="text-slate-300 text-base leading-relaxed space-y-4">
+                <p>يرجى الانتظار قليلاً ريثما يتم تحميل محتوى الدرس...</p>
+            </div>
+        </div>
+
+        <!-- قسم الاختبار الذاتي (سؤال بسؤال) -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl">
+            <div class="flex items-center gap-2 mb-6">
+                <span class="text-2xl">🎯</span>
+                <h3 class="text-xl font-black text-amber-400">اختبر فهمك للدرس</h3>
+            </div>
+
+            <div class="flex justify-between items-center mb-6 border-b border-slate-800 pb-4">
+                <span id="lesson-q-counter" class="text-amber-400 font-bold text-sm">السؤال 1 من 1</span>
+                <span id="lesson-score-tracker" class="bg-slate-950 text-slate-300 px-3 py-1 rounded-lg text-xs font-bold border border-slate-800">النتيجة: 0</span>
+            </div>
+
+            <div id="lesson-question-area">
+                <h4 id="lesson-q-title" class="text-lg font-black mb-6 leading-relaxed">جاري تحميل الأسئلة...</h4>
+                <div id="lesson-options-container" class="space-y-3">
+                    <!-- خيارات الإجابة -->
+                </div>
+            </div>
+
+            <div id="lesson-result-area" class="hidden text-center py-6">
+                <div class="text-5xl mb-3">🎉</div>
+                <h4 class="text-xl font-black mb-2 text-amber-500">أهلاً بك! أنهيت أسئلة هذا الدرس</h4>
+                <p id="lesson-final-score" class="text-slate-300 text-base mb-5"></p>
+                <button onclick="resetLessonQuiz()" class="bg-amber-600 hover:bg-amber-700 font-bold px-5 py-2 rounded-xl text-sm transition-all shadow-lg shadow-amber-600/20">إعادة الأسئلة 🔄</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- حقوق النشر -->
+    <footer class="text-center py-6 text-slate-500 text-xs border-t border-slate-900">
+        جميع الحقوق محفوظة © منصة أطلس التعليمية
+    </footer>
+
+    <!-- السكريبت البرمجي لإدارة الدرس والأسئلة -->
+    <script>
+        // محاكاة جلب تفاصيل الدرس (يمكنك ربطها بمعرف درس عبر الـ URL مستقبلاً)
+        document.getElementById('lesson-main-title').innerText = "درس اليوم: التعرف على المنهج";
+        document.getElementById('lesson-content-body').innerHTML = `
+            <p>أهلاً بك أيها البطل في هذا الدرس التفاعلي. اقرأ الشرح جيداً بتركيز، ثم انتقل مباشرة للاجابة على الأسئلة التدريبية الموجودة في الأسفل لتقييم مدى استيعابك.</p>
+        `;
+
+        // جلب الأسئلة وتصفيتها حسب صف الطالب المخزن في المتصفح
+        const studentGrade = localStorage.getItem('studentGrade') || 'p4';
+        const allCustomQuestions = JSON.parse(localStorage.getItem('customQuestions') || '[]');
+        
+        // يمكنك تخصيص فلترة إضافية للدرس إذا أردت (مثلاً عبر ربط السؤال برقم الدرس)
+        const lessonQuestions = allCustomQuestions.filter(q => q.grade === studentGrade);
+
+        let lIndex = 0;
+        let lScore = 0;
+
+        const lCounter = document.getElementById('lesson-q-counter');
+        const lTracker = document.getElementById('lesson-score-tracker');
+        const lTitle = document.getElementById('lesson-q-title');
+        const lOptions = document.getElementById('lesson-options-container');
+        const lQArea = document.getElementById('lesson-question-area');
+        const lResArea = document.getElementById('lesson-result-area');
+        const lFinalText = document.getElementById('lesson-final-score');
+
+        if (lessonQuestions.length > 0) {
+            loadLessonQuestion();
+        } else {
+            document.getElementById('lesson-q-counter').parentElement.parentElement.innerHTML = `
+                <div class="text-center py-6 text-slate-400 text-sm">
+                    📌 سيتم إضافة أسئلة لهذا الدرس قريباً من قبل المعلم.
+                </div>
+            `;
+        }
+
+        function loadLessonQuestion() {
+            if (lIndex >= lessonQuestions.length) {
+                lQArea.classList.add('hidden');
+                lCounter.parentElement.classList.add('hidden');
+                lResArea.classList.remove('hidden');
+                lFinalText.innerText = `أحسنت! حصلت على ${lScore} من ${lessonQuestions.length} إجابات صحيحة.`;
+                return;
+            }
+
+            const q = lessonQuestions[lIndex];
+            lCounter.innerText = `السؤال ${lIndex + 1} من ${lessonQuestions.length}`;
+            lTracker.innerText = `النتيجة: ${lScore}`;
+            lTitle.innerText = q.question;
+            lOptions.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-right bg-slate-950/80 hover:bg-slate-800 border border-slate-800 p-3.5 rounded-xl font-medium transition-all text-sm shadow-sm';
+                btn.innerText = opt;
+                btn.onclick = () => checkLessonAnswer(opt, q.correct, btn);
+                lOptions.appendChild(btn);
+            });
+        }
+
+        function checkLessonAnswer(selected, correct, btnEl) {
+            const buttons = lOptions.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            if (selected.trim() === correct.trim()) {
+                btnEl.classList.remove('bg-slate-950/80', 'border-slate-800');
+                btnEl.classList.add('bg-emerald-600/30', 'border-emerald-500', 'text-emerald-300');
+                lScore++;
+            } else {
+                btnEl.classList.remove('bg-slate-950/80', 'border-slate-800');
+                btnEl.classList.add('bg-rose-600/30', 'border-rose-500', 'text-rose-300');
+                
+                buttons.forEach(b => {
+                    if (b.innerText.trim() === correct.trim()) {
+                        b.classList.remove('bg-slate-950/80', 'border-slate-800');
+                        b.classList.add('bg-emerald-600/30', 'border-emerald-500', 'text-emerald-300');
+                    }
+                });
+            }
+
+            setTimeout(() => {
+                lIndex++;
+                loadLessonQuestion();
+            }, 1500);
+        }
+
+        function resetLessonQuiz() {
+            lIndex = 0;
+            lScore = 0;
+            lResArea.classList.add('hidden');
+            lQArea.classList.remove('hidden');
+            lCounter.parentElement.classList.remove('hidden');
+            loadLessonQuestion();
+        }
+    </script>
+</body>
+</html>
