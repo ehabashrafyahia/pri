@@ -3,169 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم المعلم - منصة الدراسات</title>
-    <!-- Tailwind CSS CDN -->
+    <title>لوحة التحكم الشاملة - منصة أطلس</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style> body { font-family: 'Tajawal', sans-serif; } </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between">
 
-    <!-- شريط الملاحة -->
-    <nav class="flex justify-between items-center px-6 md:px-12 py-5 border-b border-slate-800 bg-slate-900/90">
-        <div class="flex items-center space-x-3 space-x-reverse">
-            <div class="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center text-xl font-bold">⚙️</div>
-            <span class="text-xl font-bold">لوحة تحكم <span class="text-amber-500">المعلم</span></span>
+    <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center text-xl font-bold">🛠️</div>
+                <span class="text-xl font-bold">لوحة تحكم <span class="text-amber-500">المعلم</span></span>
+            </div>
+            <div class="flex gap-2">
+                <a href="dashboard.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-slate-700">معاينة لوحة الطالب</a>
+                <button onclick="logout()" class="bg-rose-900/40 hover:bg-rose-900/60 text-rose-300 px-4 py-2 rounded-xl text-xs font-bold border border-rose-700/50 transition-all">خروج</button>
+            </div>
         </div>
-        <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm border border-slate-700">
-            تسجيل الخروج
-        </button>
-    </nav>
+    </header>
 
-    <!-- المحتوى الرئيسي للوحة التحكم -->
-    <main class="container mx-auto px-6 py-8 flex-1 max-w-5xl">
-        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 mb-8 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-black text-amber-500">أهلاً بك، <span id="admin-name">أستاذ إيهاب</span> 👑</h1>
-                <p class="text-slate-400 text-sm mt-1">من هنا يمكنك إضافة الدروس والاختبارات التفاعلية للطلاب بسهولة</p>
+    <main class="max-w-4xl mx-auto px-6 py-8 flex-grow w-full space-y-8">
+        
+        <!-- قسم إضافة درس جديد -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl">
+            <h2 class="text-xl font-black text-amber-500 mb-4">إضافة درس وشرح جديد 📖</h2>
+            <form onsubmit="addLesson(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي</label>
+                    <select id="lesson-grade" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-amber-500">
+                        <option value="p4">الصف الرابع الابتدائي</option>
+                        <option value="p5">الصف الخامس الابتدائي</option>
+                        <option value="prep1">الصف الأول الإعدادي</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">عنوان الدرس</label>
+                    <input type="text" id="lesson-title" required placeholder="مثال: درس البيئة المصرية" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">محتوى الشرح</label>
+                    <textarea id="lesson-desc" rows="3" required placeholder="اكتب ملخص أو شرح الدرس هنا..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-white outline-none focus:border-amber-500"></textarea>
+                </div>
+                <button type="submit" class="bg-amber-600 hover:bg-amber-700 font-bold px-6 py-2.5 rounded-xl text-xs transition-all shadow-lg shadow-amber-600/20">حفظ ونشر الدرس 🚀</button>
+            </form>
+        </div>
+
+        <!-- قسم الإدخال الشامل للأسئلة دفعة واحدة -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl">
+            <h2 class="text-xl font-black text-amber-500 mb-2">بنك الأسئلة الشامل (إدخال دفعة واحدة) 📝</h2>
+            <p class="text-slate-400 text-xs leading-relaxed mb-6">
+                قم بلصق مجموعة الأسئلة هنا دفعة واحدة. حدد الصف، واجعل كل سؤال في سطر مستقل بحيث تفصل بين (السؤال، الخيارات مفصولة بفاصلة، والإجابة الصحيحة أو رقمها) بالرمز المفصلي <code class="text-amber-400 font-mono">|</code>.
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي المستهدف للأسئلة</label>
+                    <select id="bulk-grade" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-amber-500">
+                        <option value="p4">الصف الرابع الابتدائي</option>
+                        <option value="p5">الصف الخامس الابتدائي</option>
+                        <option value="prep1">الصف الأول الإعدادي</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-300">قائمة الأسئلة</label>
+                        <span class="text-xs text-amber-400 font-mono">مثال: السؤال | الخيار1,الخيار2,الخيار3,الخيار4 | الإجابة الصحيحة</span>
+                    </div>
+                    <textarea id="bulk-text" rows="8" placeholder="ما هي عاصمة مصر؟ | الإسكندرية,القاهرة,أسوان,الجيزة | القاهرة
+تُستخدم وردة البوصلة في... | معرفة الاتجاهات,قراءة التاريخ,حساب المسافات,رسم الخرائط | معرفة الاتجاهات" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-white font-mono leading-relaxed outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <button onclick="saveBulkQuestions()" class="w-full bg-amber-600 hover:bg-amber-700 font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-600/20 text-sm">
+                    معالجة وحفظ جميع الأسئلة للطلاب 🚀
+                </button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
-            <!-- 1. نموذج إضافة درس جديد -->
-            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 shadow-xl">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-amber-400">
-                    <span>📹</span> إضافة درس جديد
-                </h2>
-                <form onsubmit="addLesson(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي</label>
-                        <select id="lesson-grade" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200">
-                            <option value="p4">الصف الرابع الابتدائي</option>
-                            <option value="p5">الصف الخامس الابتدائي</option>
-                            <option value="prep1">الصف الأول الإعدادي</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">اسم الدرس</label>
-                        <input type="text" id="lesson-title" required placeholder="مثال: أدوات تحديد الموقع" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">رابط الفيديو (اختياري)</label>
-                        <input type="url" id="lesson-url" placeholder="https://youtube.com/..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">وصف قصير للدرس</label>
-                        <textarea id="lesson-desc" rows="2" placeholder="اكتب ملخصاً بسيطاً للدرس..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 font-bold py-2.5 rounded-xl transition-all">
-                        حفظ ونشر الدرس 🚀
-                    </button>
-                </form>
-            </div>
-
-            <!-- 2. نموذج إنشاء سؤال جديد للاختبارات -->
-            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 shadow-xl">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-amber-400">
-                    <span>📝</span> إضافة سؤال لاختبار إلكتروني
-                </h2>
-                <form onsubmit="addQuizQuestion(event)" class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي</label>
-                        <select id="q-grade" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200">
-                            <option value="p4">الصف الرابع الابتدائي</option>
-                            <option value="p5">الصف الخامس الابتدائي</option>
-                            <option value="prep1">الصف الأول الإعدادي</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">السؤال</label>
-                        <input type="text" id="q-text" required placeholder="مثال: تُستخدم وردة البوصلة في..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="q-opt1" required placeholder="الخيار الأول" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-                        <input type="text" id="q-opt2" required placeholder="الخيار الثاني" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-                        <input type="text" id="q-opt3" placeholder="الخيار الثالث" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-                        <input type="text" id="q-opt4" placeholder="الخيار الرابع" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">الإجابة الصحيحة</label>
-                        <input type="text" id="q-correct" required placeholder="اكتب الخيار الصحيح نصاً" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-400 font-bold">
-                    </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 font-bold py-2.5 rounded-xl transition-all">
-                        حفظ السؤال للاختبار 💾
-                    </button>
-                </form>
-            </div>
-
-        </div>
     </main>
 
-    <!-- التذييل -->
-    <footer class="text-center py-6 border-t border-slate-800 text-slate-500 text-sm">
-        © 2026 لوحة إدارة المنصة التعليمية
+    <footer class="text-center py-6 border-t border-slate-900 text-slate-500 text-xs">
+        © 2026 منصة أطلس التعليمية - لوحة المعلم
     </footer>
 
     <script>
+        // التحقق من صلاحيات المعلم
         const role = localStorage.getItem('userRole');
-        const name = localStorage.getItem('userName');
-
         if (role !== 'admin') {
-            alert('عذراً، هذه الصفحة مخصصة لمدير المنصة فقط!');
+            alert('عذراً، هذه الصفحة مخصصة للمعلم فقط!');
             window.location.href = 'login.html';
-        } else if (name) {
-            document.getElementById('admin-name').innerText = name;
         }
 
         function addLesson(e) {
             e.preventDefault();
-
             const grade = document.getElementById('lesson-grade').value;
-            const title = document.getElementById('lesson-title').value;
-            const url = document.getElementById('lesson-url').value;
-            const desc = document.getElementById('lesson-desc').value;
+            const title = document.getElementById('lesson-title').value.trim();
+            const desc = document.getElementById('lesson-desc').value.trim();
 
-            const newLesson = { grade, title, url, desc };
+            const lessons = JSON.parse(localStorage.getItem('customLessons') || '[]');
+            lessons.push({ grade, title, desc });
+            localStorage.setItem('customLessons', JSON.stringify(lessons));
 
-            const existingLessons = JSON.parse(localStorage.getItem('customLessons') || '[]');
-            existingLessons.push(newLesson);
-
-            localStorage.setItem('customLessons', JSON.stringify(existingLessons));
-
-            alert('تم حفظ ونشر الدرس بنجاح!');
-            e.target.reset();
+            alert('تم إضافة الدرس ونشره بنجاح للطلاب!');
+            document.getElementById('lesson-title').value = '';
+            document.getElementById('lesson-desc').value = '';
         }
 
-        function addQuizQuestion(e) {
-            e.preventDefault();
+        function saveBulkQuestions() {
+            const grade = document.getElementById('bulk-grade').value;
+            const rawText = document.getElementById('bulk-text').value.trim();
 
-            const grade = document.getElementById('q-grade').value;
-            const question = document.getElementById('q-text').value;
-            const options = [
-                document.getElementById('q-opt1').value,
-                document.getElementById('q-opt2').value,
-                document.getElementById('q-opt3').value,
-                document.getElementById('q-opt4').value
-            ].filter(Boolean);
-            const correct = document.getElementById('q-correct').value;
+            if (!rawText) {
+                alert('الرجاء إدخال الأسئلة في المربع أولاً!');
+                return;
+            }
 
-            const newQuestion = { grade, question, options, correct };
-
+            const lines = rawText.split('\n');
+            let addedCount = 0;
             const existingQuestions = JSON.parse(localStorage.getItem('customQuestions') || '[]');
-            existingQuestions.push(newQuestion);
 
-            localStorage.setItem('customQuestions', JSON.stringify(existingQuestions));
+            lines.forEach(line => {
+                if (!line.includes('|')) return;
+                const parts = line.split('|').map(p => p.trim());
+                if (parts.length >= 3) {
+                    const question = parts[0];
+                    const options = parts[1].split(',').map(o => o.trim());
+                    let correct = parts[2];
 
-            alert('تمت إضافة السؤال بنجاح إلى بنك الأسئلة!');
-            e.target.reset();
+                    // دعم إدخال رقم الإجابة الصحيحة مباشرة (مثل 1 أو 2 أو 3 أو 4) وتحويله للنص تلقائياً
+                    if (!isNaN(correct) && Number(correct) >= 1 && Number(correct) <= options.length) {
+                        correct = options[Number(correct) - 1];
+                    }
+
+                    existingQuestions.push({
+                        grade: grade,
+                        question: question,
+                        options: options,
+                        correct: correct
+                    });
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                localStorage.setItem('customQuestions', JSON.stringify(existingQuestions));
+                alert(`تم بنجاح إضافة ومعالجة ${addedCount} سؤالاً وعرضها بشكل تفاعلي للطلاب!`);
+                document.getElementById('bulk-text').value = '';
+            } else {
+                alert('حدث خطأ في تنسيق النص. تأكد من استخدام الرمز (|) بين السؤال والخيارات والإجابة.');
+            }
         }
 
         function logout() {
-            localStorage.removeItem('userName');
-            localStorage.removeItem('userRole');
-            localStorage.removeItem('studentName');
-            localStorage.removeItem('studentGrade');
+            localStorage.clear();
             window.location.href = 'login.html';
         }
     </script>
