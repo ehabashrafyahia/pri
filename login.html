@@ -8,94 +8,84 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style> 
         body { font-family: 'Tajawal', sans-serif; } 
-        
-        /* تأثيرات الانيميشن المخصصة للشاشة الترحيبية */
         @keyframes floatLogo {
             0%, 100% { transform: translateY(0px) scale(1); }
-            50% { transform: translateY(-10px) scale(1.05); }
+            50% { transform: translateY(-8px) scale(1.03); }
         }
         @keyframes pulseGlow {
             0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.15); }
+            50% { opacity: 0.6; transform: scale(1.1); }
         }
-        .animate-float {
-            animation: floatLogo 3s ease-in-out infinite;
-        }
-        .animate-glow {
-            animation: pulseGlow 3s ease-in-out infinite;
-        }
+        .animate-float { animation: floatLogo 3s ease-in-out infinite; }
+        .animate-glow { animation: pulseGlow 3s ease-in-out infinite; }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center overflow-hidden relative">
+<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center overflow-hidden relative p-4">
 
-    <!-- خلفية جمالية متحركة (Glow Effects) -->
-    <div class="absolute w-96 h-96 bg-amber-600/10 rounded-full blur-3xl animate-glow -top-20 -right-20 pointer-events-none"></div>
-    <div class="absolute w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-glow -bottom-20 -left-20 pointer-events-none" style="animation-delay: 1.5s;"></div>
+    <!-- خلفية مضيئة متجاوبة -->
+    <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-amber-600/10 rounded-full blur-3xl animate-glow -top-10 -right-10 pointer-events-none"></div>
+    <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-amber-500/10 rounded-full blur-3xl animate-glow -bottom-10 -left-10 pointer-events-none" style="animation-delay: 1.5s;"></div>
 
-    <!-- حاوية شاشة الـ Splash الاحترافية -->
-    <div id="splash-screen" class="absolute inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center transition-all duration-700 px-6">
+    <!-- شاشة الـ Splash الاحترافية (تظهر أولاً وتتجاوب مع الهواتف) -->
+    <div id="splash-screen" class="absolute inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center transition-all duration-700 px-4 text-center">
         <div class="relative mb-6">
-            <!-- هالة مضيئة خلف الشعار -->
             <div class="absolute inset-0 bg-amber-500/20 rounded-3xl blur-xl animate-glow"></div>
-            <!-- أيقونة الشعار -->
-            <div class="relative w-24 h-24 bg-gradient-to-br from-amber-500 to-amber-700 rounded-3xl flex items-center justify-center text-5xl shadow-2xl border border-amber-400/30 animate-float">
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-500 to-amber-700 rounded-3xl flex items-center justify-center text-4xl sm:text-5xl shadow-2xl border border-amber-400/30 animate-float">
                 🌍
             </div>
         </div>
 
-        <h1 class="text-3xl md:text-4xl font-black tracking-wide mb-2 text-center">
+        <h1 class="text-2xl sm:text-4xl font-black tracking-wide mb-2">
             منصة <span class="text-amber-500">أطلس</span> التعليمية
         </h1>
-        <p class="text-slate-400 text-xs md:text-sm tracking-widest uppercase mb-8 text-center">
+        <p class="text-slate-400 text-xs sm:text-sm tracking-wider uppercase mb-8">
             بوابتك الذكية لدراسات اجتماعية ممتعة
         </p>
 
-        <!-- شريط التحميل التفاعلي (Progress Bar) -->
-        <div class="w-48 h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+        <!-- شريط التحميل -->
+        <div class="w-40 sm:w-48 h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
             <div id="progress-bar" class="h-full bg-amber-500 w-0 transition-all duration-1000 rounded-full"></div>
         </div>
     </div>
 
-    <!-- المحتوى الأساسي للصفحة الرئيسية (يظهر بعد انتهاء الـ Splash) -->
-    <main class="container mx-auto px-6 py-16 max-w-4xl text-center flex flex-col justify-center items-center opacity-0 transition-opacity duration-1000" id="main-content">
-        <div class="w-20 h-20 bg-amber-500/10 border border-amber-500/20 rounded-3xl flex items-center justify-center text-4xl mb-6 shadow-lg shadow-amber-500/5">📚</div>
-        <h2 class="text-3xl md:text-5xl font-black mb-4 leading-tight">
-            مرحباً بك في منصة <span class="text-amber-500">أطلس</span>
+    <!-- المحتوى الرئيسي الذي يظهر بعد الـ Splash (يمكنك توجيهه مباشرة لصفحة الدخول أو العرض) -->
+    <main class="w-full max-w-sm sm:max-w-md text-center flex flex-col justify-center items-center opacity-0 transition-opacity duration-1000 bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl" id="main-content">
+        <div class="w-16 h-16 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-inner">📚</div>
+        <h2 class="text-2xl font-black mb-2">
+            مرحباً بك في <span class="text-amber-500">أطلس</span>
         </h2>
-        <p class="text-slate-400 text-base max-w-xl mx-auto mb-8 leading-relaxed">
-            المنصة التعليمية التفاعلية للمرحلتين الابتدائية والإعدادية لمتابعة الدروس وحل الاختبارات الذاتية.
+        <p class="text-slate-400 text-xs sm:text-sm mb-6 leading-relaxed">
+            المنصة التفاعلية الخاصة بالمعلم والطلاب للمرحلتين الابتدائية والإعدادية.
         </p>
-        <div class="flex gap-4">
-            <a href="login.html" class="bg-amber-600 hover:bg-amber-700 font-bold px-8 py-3.5 rounded-2xl transition-all shadow-xl shadow-amber-600/20 text-sm flex items-center gap-2">
-                تسجيل الدخول للمنصة 🚀
-            </a>
-        </div>
+        <a href="login.html" class="w-full bg-amber-600 hover:bg-amber-700 active:scale-95 font-bold py-3.5 rounded-xl transition-all shadow-xl shadow-amber-600/20 text-sm flex items-center justify-center gap-2">
+            الدخول إلى صفحة تسجيل الدخول 🚀
+        </a>
     </main>
 
     <script>
-        // محاكاة عملية التحميل التلقائي لشاشة الـ Splash
+        // التحكم في مدة وشريط شاشة الترحيب والانتقال المرن
         window.addEventListener('DOMContentLoaded', () => {
             const progressBar = document.getElementById('progress-bar');
             const splashScreen = document.getElementById('splash-screen');
             const mainContent = document.getElementById('main-content');
 
-            // تحريك شريط التحميل بعد قليل من الفتح
             setTimeout(() => {
                 progressBar.style.width = '100%';
-            }, 200);
+            }, 100);
 
-            // إخفاء الـ Splash وعرض المحتوى بعد 2.2 ثانية بسلاسة
+            // بعد ثانيتين تختفي شاشة الـ Splash وتظهر القناة الرئيسية أو الانتقال التلقائي
             setTimeout(() => {
                 splashScreen.style.opacity = '0';
                 splashScreen.style.pointerEvents = 'none';
-                
                 mainContent.style.opacity = '1';
 
-                // إزالة عنصر الـ Splash تماماً من الصفحة بعد انتهاء التلاشي
                 setTimeout(() => {
                     splashScreen.remove();
                 }, 700);
             }, 2000);
+
+            /* ملاحظة: إذا كنت تريد الانتقال التلقائي لصفحة login.html فوراً بعد الـ Splash بدون إظهار زر، 
+               استبدل الكود أعلاه بـ: window.location.href = 'login.html'; */
         });
     </script>
 </body>
