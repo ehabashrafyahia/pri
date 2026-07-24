@@ -10,14 +10,21 @@
 </head>
 <body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between">
 
+    <script>
+        // حماية صفحة المعلم والتأكد من صلاحية OlO فقط
+        if (localStorage.getItem('userRole') !== 'admin') {
+            alert('عذراً، هذه الصفحة مخصصة للمعلم OlO فقط!');
+            window.location.href = 'login.html';
+        }
+    </script>
+
     <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3 space-x-reverse">
                 <div class="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center text-xl font-bold">🛠️</div>
-                <span class="text-xl font-bold">لوحة تحكم <span class="text-amber-500">المعلم</span></span>
+                <span class="text-xl font-bold">لوحة تحكم المعلم (<span class="text-amber-500">OlO</span>)</span>
             </div>
-            <div class="flex gap-2">
-                <a href="dashboard.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-slate-700">معاينة لوحة الطالب</a>
+            <div>
                 <button onclick="logout()" class="bg-rose-900/40 hover:bg-rose-900/60 text-rose-300 px-4 py-2 rounded-xl text-xs font-bold border border-rose-700/50 transition-all">خروج</button>
             </div>
         </div>
@@ -34,7 +41,10 @@
                     <select id="lesson-grade" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-amber-500">
                         <option value="p4">الصف الرابع الابتدائي</option>
                         <option value="p5">الصف الخامس الابتدائي</option>
+                        <option value="p6">الصف السادس الابتدائي</option>
                         <option value="prep1">الصف الأول الإعدادي</option>
+                        <option value="prep2">الصف الثاني الإعدادي</option>
+                        <option value="prep3">الصف الثالث الإعدادي</option>
                     </select>
                 </div>
                 <div>
@@ -62,17 +72,20 @@
                     <select id="bulk-grade" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-amber-500">
                         <option value="p4">الصف الرابع الابتدائي</option>
                         <option value="p5">الصف الخامس الابتدائي</option>
+                        <option value="p6">الصف السادس الابتدائي</option>
                         <option value="prep1">الصف الأول الإعدادي</option>
+                        <option value="prep2">الصف الثاني الإعدادي</option>
+                        <option value="prep3">الصف الثالث الإعدادي</option>
                     </select>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-1">
                         <label class="block text-xs font-bold text-slate-300">قائمة الأسئلة</label>
-                        <span class="text-xs text-amber-400 font-mono">مثال: السؤال | الخيار1,الخيار2,الخيار3,الخيار4 | الإجابة الصحيحة</span>
+                        <span class="text-xs text-amber-400 font-mono">مثال: السؤال | الخيار1,الخيار2,الخيار3,الخيار4 | 2 (رقم الإجابة) أو اسم الإجابة</span>
                     </div>
-                    <textarea id="bulk-text" rows="8" placeholder="ما هي عاصمة مصر؟ | الإسكندرية,القاهرة,أسوان,الجيزة | القاهرة
-تُستخدم وردة البوصلة في... | معرفة الاتجاهات,قراءة التاريخ,حساب المسافات,رسم الخرائط | معرفة الاتجاهات" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-white font-mono leading-relaxed outline-none focus:border-amber-500"></textarea>
+                    <textarea id="bulk-text" rows="8" placeholder="ما هي عاصمة مصر؟ | الإسكندرية,القاهرة,أسوان,الجيزة | 2
+تُستخدم وردة البوصلة في... | معرفة الاتجاهات,قراءة التاريخ,حساب المسافات,رسم الخرائط | 1" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-white font-mono leading-relaxed outline-none focus:border-amber-500"></textarea>
                 </div>
 
                 <button onclick="saveBulkQuestions()" class="w-full bg-amber-600 hover:bg-amber-700 font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-600/20 text-sm">
@@ -84,17 +97,10 @@
     </main>
 
     <footer class="text-center py-6 border-t border-slate-900 text-slate-500 text-xs">
-        © 2026 منصة أطلس التعليمية - لوحة المعلم
+        © 2026 منصة أطلس التعليمية - لوحة المعلم OlO
     </footer>
 
     <script>
-        // التحقق من صلاحيات المعلم
-        const role = localStorage.getItem('userRole');
-        if (role !== 'admin') {
-            alert('عذراً، هذه الصفحة مخصصة للمعلم فقط!');
-            window.location.href = 'login.html';
-        }
-
         function addLesson(e) {
             e.preventDefault();
             const grade = document.getElementById('lesson-grade').value;
@@ -131,7 +137,6 @@
                     const options = parts[1].split(',').map(o => o.trim());
                     let correct = parts[2];
 
-                    // دعم إدخال رقم الإجابة الصحيحة مباشرة (مثل 1 أو 2 أو 3 أو 4) وتحويله للنص تلقائياً
                     if (!isNaN(correct) && Number(correct) >= 1 && Number(correct) <= options.length) {
                         correct = options[Number(correct) - 1];
                     }
