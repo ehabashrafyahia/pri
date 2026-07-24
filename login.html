@@ -11,15 +11,78 @@
     <!-- React & ReactDOM CDN -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <!-- Babel لتحويل كود JSX مباشرة في المتصفح -->
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style> body { font-family: 'Tajawal', sans-serif; } </style>
+    <style> 
+        body { font-family: 'Tajawal', sans-serif; } 
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-8px) scale(1.03); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        .animate-float { animation: floatLogo 3s ease-in-out infinite; }
+        .animate-glow { animation: pulseGlow 3s ease-in-out infinite; }
+    </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center overflow-hidden relative p-4">
 
-    <!-- العنصر الذي سيتم حقن مكون React فيه -->
-    <div id="root"></div>
+    <!-- خلفية مضيئة متجاوبة -->
+    <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-amber-600/10 rounded-full blur-3xl animate-glow -top-10 -right-10 pointer-events-none"></div>
+    <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-amber-500/10 rounded-full blur-3xl animate-glow -bottom-10 -left-10 pointer-events-none" style="animation-delay: 1.5s;"></div>
 
+    <!-- شاشة الـ Splash (تظهر أولاً وتملأ الشريط باسم المنصة) -->
+    <div id="splash-screen" class="absolute inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center transition-all duration-700 px-4 text-center">
+        <div class="relative mb-6">
+            <div class="absolute inset-0 bg-amber-500/20 rounded-3xl blur-xl animate-glow"></div>
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-500 to-amber-700 rounded-3xl flex items-center justify-center text-4xl sm:text-5xl shadow-2xl border border-amber-400/30 animate-float">
+                🌍
+            </div>
+        </div>
+
+        <h1 class="text-2xl sm:text-4xl font-black tracking-wide mb-2">
+            منصة <span class="text-amber-500">أطلس</span> التعليمية
+        </h1>
+        <p class="text-slate-400 text-xs sm:text-sm tracking-wider uppercase mb-8">
+            بوابتك الذكية لدراسات اجتماعية ممتعة
+        </p>
+
+        <!-- شريط التحميل -->
+        <div class="w-44 sm:w-52 h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+            <div id="progress-bar" class="h-full bg-amber-500 w-0 transition-all duration-1200 rounded-full"></div>
+        </div>
+    </div>
+
+    <!-- حاوية React لتسجيل الدخول -->
+    <div id="root" class="opacity-0 transition-opacity duration-1000 w-full flex items-center justify-center"></div>
+
+    <script>
+        // التحكم في مدة وشريط شاشة الترحيب وإظهار شاشة الدخول تلقائياً
+        window.addEventListener('DOMContentLoaded', () => {
+            const progressBar = document.getElementById('progress-bar');
+            const splashScreen = document.getElementById('splash-screen');
+            const rootContainer = document.getElementById('root');
+
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+            }, 150);
+
+            // بعد ثانيتين تختفي الـ Splash تماماً وتظهر شاشة تسجيل الدخول بـ React
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                splashScreen.style.pointerEvents = 'none';
+                rootContainer.style.opacity = '1';
+
+                setTimeout(() => {
+                    splashScreen.remove();
+                }, 700);
+            }, 2200);
+        });
+    </script>
+
+    <!-- كود React لصفحة تسجيل الدخول -->
     <script type="text/babel">
         function Login() {
             const [inputName, setInputName] = React.useState('');
@@ -69,7 +132,7 @@
             };
 
             return (
-                <div className="bg-slate-900/90 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 max-w-sm sm:max-w-md w-full shadow-2xl relative overflow-hidden">
+                <div className="bg-slate-900/90 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 max-w-sm sm:max-w-md w-full shadow-2xl relative overflow-hidden z-20">
                     
                     {/* تأثير توهج خلفي خفيف */}
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -112,7 +175,6 @@
             );
         }
 
-        // رندر مكون React داخل الـ div الذي يحمل ID باسم root
         ReactDOM.createRoot(document.getElementById('root')).render(<Login />);
     </script>
 </body>
