@@ -36,7 +36,7 @@
             <!-- 1. نموذج إضافة درس جديد -->
             <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 shadow-xl">
                 <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-amber-400">
-                    <span>📹</span> إضافة درس فيديو جديد
+                    <span>📹</span> إضافة درس جديد
                 </h2>
                 <form onsubmit="addLesson(event)" class="space-y-4">
                     <div>
@@ -52,7 +52,7 @@
                         <input type="text" id="lesson-title" required placeholder="مثال: أدوات تحديد الموقع" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">رابط الفيديو (YouTube)</label>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">رابط الفيديو (اختياري)</label>
                         <input type="url" id="lesson-url" placeholder="https://youtube.com/..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
                     </div>
                     <div>
@@ -90,8 +90,8 @@
                         <input type="text" id="q-opt4" placeholder="الخيار الرابع" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">الإجابة الصحيحة (اكتب الخيار الصحيح نصاً)</label>
-                        <input type="text" id="q-correct" required placeholder="الخيار الصحيح بالضبط" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-400 font-bold">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">الإجابة الصحيحة</label>
+                        <input type="text" id="q-correct" required placeholder="اكتب الخيار الصحيح نصاً" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-400 font-bold">
                     </div>
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 font-bold py-2.5 rounded-xl transition-all">
                         حفظ السؤال للاختبار 💾
@@ -107,9 +107,7 @@
         © 2026 لوحة إدارة المنصة التعليمية
     </footer>
 
-    <!-- سكربت إدارة الحفظ والتحقق -->
     <script>
-        // التحقق من صلاحيات الأدمن
         const role = localStorage.getItem('userRole');
         const name = localStorage.getItem('userName');
 
@@ -120,7 +118,6 @@
             document.getElementById('admin-name').innerText = name;
         }
 
-        // دالة حفظ الدرس الجديد
         function addLesson(e) {
             e.preventDefault();
 
@@ -140,7 +137,6 @@
             e.target.reset();
         }
 
-        // دالة حفظ الأسئلة للاختبارات
         function addQuizQuestion(e) {
             e.preventDefault();
 
@@ -166,7 +162,10 @@
         }
 
         function logout() {
-            localStorage.clear();
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('studentName');
+            localStorage.removeItem('studentGrade');
             window.location.href = 'login.html';
         }
     </script>
