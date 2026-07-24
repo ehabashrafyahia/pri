@@ -12,28 +12,23 @@
 
     <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl">
         <div class="text-center mb-8">
-            <div class="w-14 h-14 bg-amber-600/20 border border-amber-500/30 text-amber-500 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold mb-3">🎓</div>
-            <h1 class="text-2xl font-black text-white">تسجيل الدخول للمنصة</h1>
-            <p class="text-slate-400 text-xs mt-1">أدخل بياناتك للبدء في تصفح الدروس</p>
+            <div class="w-14 h-14 bg-amber-600/20 border border-amber-500/30 text-amber-500 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold mb-3">🔒</div>
+            <h1 class="text-2xl font-black text-white">تسجيل الدخول الآمن</h1>
+            <p class="text-slate-400 text-xs mt-1">المنصة مخصصة للحسابات الرسمية فقط</p>
         </div>
 
         <form onsubmit="handleLogin(event)" class="space-y-4">
             <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">اسم الطالب أو المعلم</label>
-                <input type="text" id="login-name" required placeholder="اكتب اسمك هنا..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none transition-all">
+                <label class="block text-xs font-bold text-slate-300 mb-1">اسم المستخدم أو المعرف السري</label>
+                <input type="password" id="login-name" required placeholder="أدخل المعرف الخاص بك..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none transition-all font-mono">
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي</label>
-                <select id="login-grade" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200 focus:border-amber-500 outline-none transition-all">
-                    <option value="p4">الصف الرابع الابتدائي</option>
-                    <option value="p5">الصف الخامس الابتدائي</option>
-                    <option value="prep1">الصف الأول الإعدادي</option>
-                </select>
+            <div id="error-msg" class="hidden bg-rose-950/40 border border-rose-900/50 text-rose-300 p-3 rounded-xl text-xs text-center font-bold">
+                ⚠️ اسم المستخدم غير صحيح! يجدر استخدام المعرف المصرح به فقط.
             </div>
 
             <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-600/20 text-sm mt-2">
-                دخول المنصة 🚀
+                تحقق ودخول المنصة 🚀
             </button>
         </form>
     </div>
@@ -41,20 +36,40 @@
     <script>
         function handleLogin(e) {
             e.preventDefault();
-            const name = document.getElementById('login-name').value.trim();
-            const grade = document.getElementById('login-grade').value;
+            const inputName = document.getElementById('login-name').value.trim();
+            const errorDiv = document.getElementById('error-msg');
 
-            // إذا كان الاسم خاص بالأستاذ إيهاب، ندخله للوحة التحكم مباشرة
-            if (name.includes('إيهاب') || name.includes('ابهاب') || name === 'admin') {
+            // حساب المعلم الخاص بك
+            if (inputName === 'OlO') {
                 localStorage.setItem('userRole', 'admin');
-                localStorage.setItem('userName', name);
+                localStorage.setItem('userName', 'OlO (المعلم)');
                 window.location.href = 'admin.html';
-            } else {
+                return;
+            }
+
+            // خريطة لربط يوزرات الطلاب بالصف الدراسي حصراً
+            const studentAccounts = {
+                'student4': { name: 'طالب الصف الرابع', grade: 'p4' },
+                'student5': { name: 'طالب الصف الخامس', grade: 'p5' },
+                'student6': { name: 'طالب الصف السادس', grade: 'p6' },
+                'prep1': { name: 'طالب الأول الإعدادي', grade: 'prep1' },
+                'prep2': { name: 'طالب الثاني الإعدادي', grade: 'prep2' },
+                'prep3': { name: 'طالب الثالث الإعدادي', grade: 'prep3' }
+            };
+
+            const account = studentAccounts[inputName];
+
+            if (account) {
+                errorDiv.classList.add('hidden');
                 localStorage.setItem('userRole', 'student');
-                localStorage.setItem('userName', name);
-                localStorage.setItem('studentName', name);
-                localStorage.setItem('studentGrade', grade);
+                localStorage.setItem('userName', account.name);
+                localStorage.setItem('studentName', account.name);
+                localStorage.setItem('studentGrade', account.grade);
                 window.location.href = 'dashboard.html';
+            } else {
+                // منع أي يوزر آخر تماماً وإظهار تنبيه الخطأ
+                errorDiv.classList.remove('hidden');
+                document.getElementById('login-name').value = '';
             }
         }
     </script>
