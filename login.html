@@ -27,14 +27,14 @@
         .animate-glow { animation: pulseGlow 3s ease-in-out infinite; }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center overflow-hidden relative p-4">
+<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center overflow-x-hidden relative p-4">
 
     <!-- خلفية مضيئة متجاوبة -->
     <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-amber-600/10 rounded-full blur-3xl animate-glow -top-10 -right-10 pointer-events-none"></div>
     <div class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-amber-500/10 rounded-full blur-3xl animate-glow -bottom-10 -left-10 pointer-events-none" style="animation-delay: 1.5s;"></div>
 
     <!-- شاشة الـ Splash (تظهر أولاً وتملأ الشريط باسم المنصة) -->
-    <div id="splash-screen" class="absolute inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center transition-all duration-700 px-4 text-center">
+    <div id="splash-screen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center transition-all duration-700 px-4 text-center">
         <div class="relative mb-6">
             <div class="absolute inset-0 bg-amber-500/20 rounded-3xl blur-xl animate-glow"></div>
             <div class="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-500 to-amber-700 rounded-3xl flex items-center justify-center text-4xl sm:text-5xl shadow-2xl border border-amber-400/30 animate-float">
@@ -51,34 +51,40 @@
 
         <!-- شريط التحميل -->
         <div class="w-44 sm:w-52 h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
-            <div id="progress-bar" class="h-full bg-amber-500 w-0 transition-all duration-1200 rounded-full"></div>
+            <div id="progress-bar" class="h-full bg-amber-500 w-0 transition-all duration-1500 rounded-full"></div>
         </div>
     </div>
 
     <!-- حاوية React لتسجيل الدخول -->
-    <div id="root" class="opacity-0 transition-opacity duration-1000 w-full flex items-center justify-center"></div>
+    <div id="root" class="w-full flex items-center justify-center z-10"></div>
 
     <script>
-        // التحكم في مدة وشريط شاشة الترحيب وإظهار شاشة الدخول تلقائياً
+        // التحقق مما إذا شاهد المستخدم شاشة الترحيب مسبقاً في هذه الجلسة
         window.addEventListener('DOMContentLoaded', () => {
             const progressBar = document.getElementById('progress-bar');
             const splashScreen = document.getElementById('splash-screen');
-            const rootContainer = document.getElementById('root');
 
+            // إذا كان قد شاهدها، نقوم بإزالتها فوراً لكي لا تتكرر عند الضغط أو التنقل
+            if (sessionStorage.getItem('splashShown')) {
+                splashScreen.remove();
+                return;
+            }
+
+            // تشغيل شريط التحميل لأول مرة فقط
             setTimeout(() => {
                 progressBar.style.width = '100%';
-            }, 150);
+            }, 100);
 
-            // بعد ثانيتين تختفي الـ Splash تماماً وتظهر شاشة تسجيل الدخول بـ React
+            // بعد انتهاء المدة، يتم إخفاء الـ Splash وحفظ الحالة في المتصفح المؤقت
             setTimeout(() => {
                 splashScreen.style.opacity = '0';
                 splashScreen.style.pointerEvents = 'none';
-                rootContainer.style.opacity = '1';
-
+                
                 setTimeout(() => {
                     splashScreen.remove();
+                    sessionStorage.setItem('splashShown', 'true');
                 }, 700);
-            }, 2200);
+            }, 2000);
         });
     </script>
 
@@ -132,7 +138,7 @@
             };
 
             return (
-                <div className="bg-slate-900/90 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 max-w-sm sm:max-w-md w-full shadow-2xl relative overflow-hidden z-20">
+                <div className="bg-slate-900/90 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 max-w-sm sm:max-w-md w-full shadow-2xl relative overflow-hidden">
                     
                     {/* تأثير توهج خلفي خفيف */}
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
