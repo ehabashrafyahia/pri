@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>المنصة التعليمية | الدراسات الاجتماعية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --bg-deep: #06060f;
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --accent-1: #8b5cf6;
+            --accent-2: #6366f1;
+            --accent-3: #3b82f6;
+            --accent-4: #10b981;
+            --accent-5: #f59e0b;
+            --accent-6: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-deep);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: radial-gradient(ellipse at 30% 20%, #1a1535 0%, #0c0a1a 45%, #050510 100%);
+            position: relative;
+        }
+
+        /* شبكة خلفية */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.03;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse at center, black 25%, transparent 70%);
+        }
+
+        /* بقع ضوئية */
+        .light-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.2;
+            animation: orbDrift 16s ease-in-out infinite;
+        }
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #7c3aed;
+            top: -10%;
+            left: -8%;
+        }
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: #2563eb;
+            bottom: -12%;
+            right: -6%;
+            animation-delay: -8s;
+        }
+        @keyframes orbDrift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(40px, -30px) scale(1.14); }
+            50% { transform: translate(-20px, 25px) scale(0.88); }
+            75% { transform: translate(-35px, -15px) scale(1.06); }
+        }
+
+        /* المحتوى الرئيسي */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        /* الهيدر */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+        .header-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1, #3b82f6);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+            animation: morphLogo 6s ease-in-out infinite;
+        }
+        .header-logo span {
+            color: #fff;
+            font-family: 'El Messiri', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        @keyframes morphLogo {
+            0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+        }
+        .header h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+        }
+        .header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin: 5px 0 0;
+            font-weight: 600;
+        }
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 30px;
+            padding: 6px 16px;
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+        .user-badge i {
+            color: #34d399;
+        }
+
+        /* شبكة الأزرار */
+        .grades-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            max-width: 700px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .grade-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .grade-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .grade-card:hover::before {
+            opacity: 1;
+        }
+        .grade-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        .grade-card:active {
+            transform: scale(0.95);
+        }
+
+        .grade-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            position: relative;
+            z-index: 2;
+        }
+        .grade-card:nth-child(1) .grade-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .grade-card:nth-child(2) .grade-icon { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .grade-card:nth-child(3) .grade-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .grade-card:nth-child(4) .grade-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .grade-card:nth-child(5) .grade-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .grade-card:nth-child(6) .grade-icon { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .grade-name {
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.95rem;
+            z-index: 2;
+            line-height: 1.4;
+        }
+        .grade-desc {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        /* زر تسجيل الخروج */
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fecaca;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* التذييل */
+        .footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 30px;
+            z-index: 2;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* تجاوب */
+        @media (max-width: 640px) {
+            .grades-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .grade-card {
+                padding: 20px 10px;
+                border-radius: 20px;
+            }
+            .grade-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+                border-radius: 14px;
+            }
+            .grade-name {
+                font-size: 0.85rem;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+        }
+        @media (max-width: 380px) {
+            .grades-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .grade-card {
+                padding: 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="light-orb orb-1"></div>
+    <div class="light-orb orb-2"></div>
+    <div class="bg-grid"></div>
+
+    <!-- زر تسجيل الخروج -->
+    <button class="logout-btn" onclick="handleLogout()" title="تسجيل الخروج">
+        <i class="fas fa-sign-out-alt"></i>
+    </button>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-container">
+        <!-- الهيدر -->
+        <div class="header">
+            <div class="header-logo">
+                <span>اطلس</span>
+            </div>
+            <h1>منصة الدراسات الاجتماعية</h1>
+            <p>اختر الصف الدراسي للبدء</p>
+            <div class="user-badge" id="user-badge">
+                <i class="fas fa-circle"></i>
+                <span id="username-display">مستر إيهاب أشرف</span>
+            </div>
+        </div>
+
+        <!-- شبكة الصفوف -->
+        <div class="grades-grid" id="grades-grid">
+            <div class="grade-card" onclick="navigateToGrade('grade4')">
+                <div class="grade-icon"><i class="fas fa-seedling"></i></div>
+                <div class="grade-name">الصف الرابع الابتدائي</div>
+                <div class="grade-desc">الدراسات الاجتماعية</div>
+            </div>
+            <div class="grade-card" onclick="navigateToGrade('grade5')">
+                <div class="grade-icon"><i class="fas fa-tree"></i></div>
+                <div class="grade-name">الصف الخامس الابتدائي</div>
+                <div class="grade-desc">الدراسات الاجتماعية</div>
+            </div>
+            <div class="grade-card" onclick="navigateToGrade('grade6')">
+                <div class="grade-icon"><i class="fas fa-leaf"></i></div>
+                <div class="grade-name">الصف السادس الابتدائي</div>
+                <div class="grade-desc">الدراسات الاجتماعية</div>
+            </div>
+            <div class="grade-card" onclick="navigateToGrade('prep1')">
+                <div class="grade-icon"><i class="fas fa-compass"></i></div>
+                <div class="grade-name">الصف الأول الإعدادي</div>
+                <div class="grade-desc">الدراسات الاجتماعية</div>
+            </div>
+            <div class="grade-card" onclick="navigateToGrade('prep2')">
+                <div class="grade-icon"><i class="fas fa-globe-africa"></i></div>
+                <div class="grade-name">الصف الثاني الإعدادي</div>
+                <div class="grade-desc">الدراسات الاجتماعية</div>
+            </div>
+            <div class="grade-card" onclick="navigateToGrade('prep3')">
+                <div class="grade-icon"><i class="fas fa-landmark"></i></div>
+                <div class="grade-name">الصف الثالث الإعدادي</div>
+                <div class="grade-desc">الدراسات الاجتماعية</div>
+            </div>
+        </div>
+
+        <!-- التذييل -->
+        <div class="footer">
+            <span>إعداد وتصميم: أ. إيهاب أشرف</span> •
+            <span style="color: #a5b4fc;">01559116736</span>
+        </div>
+    </div>
+
+    <script>
+        // التحقق من تسجيل الدخول
+        if (sessionStorage.getItem("atlas_auth") !== "true") {
+            window.location.href = "index.html";
+        }
+
+        // عرض اسم المستخدم
+        const role = sessionStorage.getItem("role") || "student";
+        const usernameDisplay = document.getElementById("username-display");
+        if (role === "admin") {
+            usernameDisplay.textContent = "أ. إيهاب أشرف | مشرف";
+        } else {
+            usernameDisplay.textContent = "طالب | منصة أطلس";
+        }
+
+        // أنيميشن ظهور البطاقات
+        window.addEventListener('load', function() {
+            const cards = document.querySelectorAll('.grade-card');
+            anime({
+                targets: cards,
+                opacity: [0, 1],
+                translateY: [30, 0],
+                easing: 'easeOutCubic',
+                duration: 600,
+                delay: anime.stagger(100, {start: 300}),
+            });
+        });
+
+        // التنقل لصفحة الصف
+        function navigateToGrade(gradeId) {
+            // حفظ معرف الصف والانتقال
+            sessionStorage.setItem("currentGrade", gradeId);
+            
+            // تأثير النقر
+            const card = event.currentTarget;
+            anime({
+                targets: card,
+                scale: [1, 0.92, 1.05, 1],
+                easing: 'easeInOutQuad',
+                duration: 400,
+                complete: function() {
+                    window.location.href = "grade.html";
+                }
+            });
+        }
+
+        // تسجيل الخروج
+        function handleLogout() {
+            Swal.fire({
+                title: 'تسجيل الخروج',
+                text: 'هل أنت متأكد من الخروج؟',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، اخرج',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    window.location.href = "index.html";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
