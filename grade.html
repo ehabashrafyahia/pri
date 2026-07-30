@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>الوحدات والدروس | المنصة التعليمية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-deep: #06060f;
+            --accent-1: #8b5cf6;
+            --accent-2: #6366f1;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html { height: 100%; margin: 0; padding: 0; background: var(--bg-deep); }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: radial-gradient(ellipse at 30% 20%, #1a1535 0%, #0c0a1a 45%, #050510 100%);
+            position: relative;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+            opacity: 0.03;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse at center, black 25%, transparent 70%);
+        }
+
+        .light-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.2;
+            animation: orbDrift 16s ease-in-out infinite;
+        }
+        .orb-1 { width: 350px; height: 350px; background: #7c3aed; top: -8%; left: -6%; }
+        .orb-2 { width: 300px; height: 300px; background: #2563eb; bottom: -10%; right: -5%; animation-delay: -8s; }
+        @keyframes orbDrift {
+            0%,100%{transform:translate(0,0) scale(1)}
+            25%{transform:translate(35px,-25px) scale(1.12)}
+            50%{transform:translate(-15px,20px) scale(0.9)}
+            75%{transform:translate(-30px,-10px) scale(1.05)}
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 20px;
+        }
+
+        /* زر الرجوع */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 20;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #cbd5e1;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(139,92,246,0.3);
+        }
+
+        /* الهيدر */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            animation: fadeInDown 0.8s ease;
+        }
+        .header-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.8rem;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(139,92,246,0.4);
+        }
+        .header h1 {
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0;
+        }
+        .header p {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin: 5px 0 0;
+            font-weight: 600;
+        }
+
+        /* الوحدات */
+        .units-container {
+            max-width: 650px;
+            width: 100%;
+        }
+        .unit-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            margin-bottom: 14px;
+            overflow: hidden;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .unit-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        .unit-header:hover {
+            background: rgba(255,255,255,0.03);
+        }
+        .unit-title {
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .unit-title i {
+            color: var(--accent-1);
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+        .unit-arrow {
+            color: #64748b;
+            transition: transform 0.3s;
+            font-size: 0.8rem;
+        }
+        .unit-card.open .unit-arrow {
+            transform: rotate(180deg);
+        }
+        .unit-card.open .unit-title i {
+            transform: rotate(90deg);
+        }
+
+        .lessons-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        .unit-card.open .lessons-list {
+            max-height: 600px;
+        }
+        .lesson-item {
+            padding: 12px 20px 12px 50px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .lesson-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            padding-right: 25px;
+        }
+        .lesson-item i {
+            color: #64748b;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+        }
+        .lesson-item:hover i {
+            color: var(--accent-1);
+            transform: translateX(-3px);
+        }
+
+        @keyframes fadeInDown {
+            from{opacity:0;transform:translateY(-20px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+
+        @media (max-width: 640px) {
+            .unit-header { padding: 14px 16px; }
+            .lesson-item { padding: 10px 16px 10px 40px; font-size: 0.8rem; }
+            .header h1 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="light-orb orb-1"></div>
+    <div class="light-orb orb-2"></div>
+    <div class="bg-grid"></div>
+
+    <!-- زر الرجوع -->
+    <button class="back-btn" onclick="goBack()" title="العودة">
+        <i class="fas fa-arrow-right"></i>
+    </button>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-container">
+        <div class="header">
+            <div class="header-icon" id="grade-icon">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h1 id="grade-title">الصف الرابع الابتدائي</h1>
+            <p>الدراسات الاجتماعية - الوحدات والدروس</p>
+        </div>
+
+        <!-- قائمة الوحدات والدروس -->
+        <div class="units-container" id="units-container">
+            <!-- سيتم ملؤها بالجافاسكريبت -->
+        </div>
+    </div>
+
+    <script>
+        // التحقق من تسجيل الدخول
+        if (sessionStorage.getItem("atlas_auth") !== "true") {
+            window.location.href = "index.html";
+        }
+
+        const currentGrade = sessionStorage.getItem("currentGrade") || "grade4";
+
+        // بيانات الصفوف والوحدات والدروس
+        const gradeData = {
+            "grade4": {
+                name: "الصف الرابع الابتدائي",
+                icon: "fa-seedling",
+                iconBg: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+                units: [
+                    {
+                        name: "الوحدة الأولى: البيئة المصرية",
+                        lessons: ["درس 1: مظاهر السطح في مصر", "درس 2: المناخ والنبات الطبيعي", "درس 3: المحافظات المصرية", "درس 4: السكان والأنشطة الاقتصادية"]
+                    },
+                    {
+                        name: "الوحدة الثانية: التاريخ المصري القديم",
+                        lessons: ["درس 1: عصر ما قبل الأسرات", "درس 2: الدولة القديمة", "درس 3: الدولة الوسطى", "درس 4: الدولة الحديثة"]
+                    },
+                    {
+                        name: "الوحدة الثالثة: مصر الحديثة",
+                        lessons: ["درس 1: ثورة 1919", "درس 2: ثورة 23 يوليو 1952", "درس 3: إنجازات مصر الحديثة"]
+                    }
+                ]
+            },
+            "grade5": {
+                name: "الصف الخامس الابتدائي",
+                icon: "fa-tree",
+                iconBg: "linear-gradient(135deg, #6366f1, #4f46e5)",
+                units: [
+                    {
+                        name: "الوحدة الأولى: الموارد الطبيعية",
+                        lessons: ["درس 1: الموارد المائية في مصر", "درس 2: الموارد المعدنية", "درس 3: مصادر الطاقة", "درس 4: الثروة الزراعية والحيوانية"]
+                    },
+                    {
+                        name: "الوحدة الثانية: الحضارة الإسلامية",
+                        lessons: ["درس 1: ظهور الإسلام", "درس 2: الخلافة الراشدة", "درس 3: الدولة الأموية", "درس 4: الدولة العباسية"]
+                    },
+                    {
+                        name: "الوحدة الثالثة: الوطن العربي",
+                        lessons: ["درس 1: الموقع والمساحة", "درس 2: مظاهر السطح", "درس 3: المناخ", "درس 4: السكان"]
+                    }
+                ]
+            },
+            "grade6": {
+                name: "الصف السادس الابتدائي",
+                icon: "fa-leaf",
+                iconBg: "linear-gradient(135deg, #3b82f6, #2563eb)",
+                units: [
+                    {
+                        name: "الوحدة الأولى: البيئة والموارد",
+                        lessons: ["درس 1: البيئة الصحراوية", "درس 2: البيئة الساحلية", "درس 3: المحميات الطبيعية", "درس 4: التنمية المستدامة"]
+                    },
+                    {
+                        name: "الوحدة الثانية: التاريخ",
+                        lessons: ["درس 1: الحملة الفرنسية", "درس 2: عصر محمد علي", "درس 3: مصر تحت الاحتلال", "درس 4: الطريق للاستقلال"]
+                    }
+                ]
+            },
+            "prep1": {
+                name: "الصف الأول الإعدادي",
+                icon: "fa-compass",
+                iconBg: "linear-gradient(135deg, #10b981, #059669)",
+                units: [
+                    {
+                        name: "الوحدة الأولى: الجغرافيا الطبيعية",
+                        lessons: ["درس 1: القارات والمحيطات", "درس 2: التضاريس", "درس 3: المناخ والعوامل المؤثرة", "درس 4: النبات الطبيعي والحيوان"]
+                    },
+                    {
+                        name: "الوحدة الثانية: حضارة مصر القديمة",
+                        lessons: ["درس 1: عصر بناة الأهرام", "درس 2: الحياة الاجتماعية", "درس 3: الكتابة والعلوم", "درس 4: الجيش والتوسع"]
+                    },
+                    {
+                        name: "الوحدة الثالثة: مصر الإسلامية",
+                        lessons: ["درس 1: الفتح الإسلامي", "درس 2: العصر الفاطمي", "درس 3: العصر الأيوبي", "درس 4: العصر المملوكي"]
+                    }
+                ]
+            },
+            "prep2": {
+                name: "الصف الثاني الإعدادي",
+                icon: "fa-globe-africa",
+                iconBg: "linear-gradient(135deg, #f59e0b, #d97706)",
+                units: [
+                    {
+                        name: "الوحدة الأولى: جغرافيا الوطن العربي",
+                        lessons: ["درس 1: الموقع والأهمية", "درس 2: التضاريس والمناخ", "درس 3: الموارد الاقتصادية", "درس 4: التكامل العربي"]
+                    },
+                    {
+                        name: "الوحدة الثانية: التاريخ الإسلامي",
+                        lessons: ["درس 1: الدولة العثمانية", "درس 2: الاستعمار الأوروبي", "درس 3: حركات التحرر", "درس 4: القضية الفلسطينية"]
+                    }
+                ]
+            },
+            "prep3": {
+                name: "الصف الثالث الإعدادي",
+                icon: "fa-landmark",
+                iconBg: "linear-gradient(135deg, #ef4444, #dc2626)",
+                units: [
+                    {
+                        name: "الوحدة الأولى: جغرافيا مصر",
+                        lessons: ["درس 1: الموقع الجغرافي لمصر", "درس 2: التضاريس والمناخ", "درس 3: السكان والتوزيع", "درس 4: الأنشطة الاقتصادية"]
+                    },
+                    {
+                        name: "الوحدة الثانية: التاريخ المصري الحديث",
+                        lessons: ["درس 1: ثورة 1919", "درس 2: ثورة 23 يوليو 1952", "درس 3: حرب أكتوبر 1973", "درس 4: إنجازات مصر المعاصرة"]
+                    },
+                    {
+                        name: "الوحدة الثالثة: مصر والعالم",
+                        lessons: ["درس 1: مصر والقضايا العربية", "درس 2: مصر والقضايا الأفريقية", "درس 3: مصر والمنظمات الدولية"]
+                    }
+                ]
+            }
+        };
+
+        // تهيئة الصفحة
+        function initPage() {
+            const data = gradeData[currentGrade];
+            if (!data) {
+                window.location.href = "home.html";
+                return;
+            }
+
+            // تحديث العنوان والأيقونة
+            document.getElementById('grade-title').textContent = data.name;
+            const iconEl = document.getElementById('grade-icon');
+            iconEl.innerHTML = `<i class="fas ${data.icon}"></i>`;
+            iconEl.style.background = data.iconBg;
+
+            // بناء الوحدات والدروس
+            const container = document.getElementById('units-container');
+            container.innerHTML = '';
+
+            data.units.forEach((unit, unitIndex) => {
+                const unitCard = document.createElement('div');
+                unitCard.className = 'unit-card';
+                
+                const unitId = `unit-${currentGrade}-${unitIndex}`;
+                
+                unitCard.innerHTML = `
+                    <div class="unit-header" onclick="toggleUnit('${unitId}')">
+                        <div class="unit-title">
+                            <i class="fas fa-book-open"></i>
+                            ${unit.name}
+                        </div>
+                        <i class="fas fa-chevron-down unit-arrow"></i>
+                    </div>
+                    <div class="lessons-list" id="${unitId}">
+                        ${unit.lessons.map((lesson, lessonIndex) => `
+                            <div class="lesson-item" onclick="openLesson('${currentGrade}', ${unitIndex}, ${lessonIndex}, '${lesson.replace(/'/g, "\\'")}')">
+                                <span>📖 ${lesson}</span>
+                                <i class="fas fa-chevron-left"></i>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                container.appendChild(unitCard);
+            });
+
+            // أنيميشن ظهور الوحدات
+            anime({
+                targets: '.unit-card',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                easing: 'easeOutCubic',
+                duration: 500,
+                delay: anime.stagger(120, {start: 300}),
+            });
+        }
+
+        // فتح/غلق الوحدة
+        function toggleUnit(unitId) {
+            const unitCard = document.getElementById(unitId).parentElement;
+            const isOpen = unitCard.classList.contains('open');
+            
+            // إغلاق جميع الوحدات أولاً
+            document.querySelectorAll('.unit-card.open').forEach(card => {
+                if (card !== unitCard) {
+                    card.classList.remove('open');
+                }
+            });
+            
+            // فتح/غلق الوحدة المحددة
+            unitCard.classList.toggle('open');
+            
+            // أنيميشن للدروس
+            if (!isOpen) {
+                const lessons = unitCard.querySelectorAll('.lesson-item');
+                anime({
+                    targets: lessons,
+                    opacity: [0, 1],
+                    translateX: [10, 0],
+                    easing: 'easeOutQuad',
+                    duration: 300,
+                    delay: anime.stagger(60),
+                });
+            }
+        }
+
+        // فتح درس
+        function openLesson(gradeId, unitIndex, lessonIndex, lessonName) {
+            sessionStorage.setItem("currentLesson", JSON.stringify({
+                gradeId: gradeId,
+                unitIndex: unitIndex,
+                lessonIndex: lessonIndex,
+                lessonName: lessonName
+            }));
+            
+            // تأثير النقر
+            const lessonEl = event.currentTarget;
+            anime({
+                targets: lessonEl,
+                scale: [1, 0.96, 1],
+                backgroundColor: ['rgba(255,255,255,0.05)', 'rgba(139,92,246,0.15)', 'rgba(255,255,255,0.05)'],
+                easing: 'easeInOutQuad',
+                duration: 350,
+                complete: function() {
+                    window.location.href = "lesson.html";
+                }
+            });
+        }
+
+        // العودة للصفحة الرئيسية
+        function goBack() {
+            window.location.href = "home.html";
+        }
+
+        // بدء التهيئة
+        initPage();
+    </script>
+</body>
+</html>
