@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>كويز إلكتروني | المنصة التعليمية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --bg-deep: #06060f;
+            --accent-1: #8b5cf6;
+            --accent-2: #6366f1;
+            --correct: #10b981;
+            --wrong: #ef4444;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html { height: 100%; margin: 0; padding: 0; background: var(--bg-deep); }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: radial-gradient(ellipse at 30% 20%, #1a1535 0%, #0c0a1a 45%, #050510 100%);
+            position: relative;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+            opacity: 0.03;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 20px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 20;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #cbd5e1;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 25px;
+            animation: fadeInDown 0.8s ease;
+            width: 100%;
+            max-width: 650px;
+        }
+        .quiz-header h1 {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin: 0;
+        }
+        .quiz-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            max-width: 300px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        .progress-text {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .question-card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 24px;
+            padding: 30px 25px;
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s;
+        }
+        .question-text {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .option-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 14px 16px;
+            color: #cbd5e1;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+            text-align: center;
+        }
+        .option-btn:hover {
+            background: rgba(139,92,246,0.15);
+            border-color: rgba(139,92,246,0.4);
+            color: #fff;
+        }
+        .option-btn.selected {
+            background: rgba(139,92,246,0.25);
+            border-color: #8b5cf6;
+            color: #fff;
+        }
+        .option-btn.correct {
+            background: rgba(16,185,129,0.25);
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+        .option-btn.wrong {
+            background: rgba(239,68,68,0.25);
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+        .option-btn:disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            padding: 12px 35px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+            display: none;
+        }
+        .btn-next:hover {
+            box-shadow: 0 10px 30px rgba(99,102,241,0.5);
+            transform: translateY(-2px);
+        }
+
+        .result-card {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 30px;
+            padding: 40px 25px;
+            display: none;
+        }
+        .result-emoji {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        .result-score {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 900;
+        }
+        .result-text {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin: 10px 0 25px;
+        }
+        .btn-retry {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            padding: 12px 35px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        @keyframes fadeInDown {
+            from{opacity:0;transform:translateY(-20px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+
+        @media (max-width: 500px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .question-text { font-size: 1rem; }
+            .option-btn { font-size: 0.85rem; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+
+    <button class="back-btn" onclick="goBack()" title="العودة">
+        <i class="fas fa-arrow-right"></i>
+    </button>
+
+    <div class="main-container">
+        <div class="quiz-header" id="quiz-header">
+            <h1>كويز إلكتروني 📝</h1>
+            <div class="quiz-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="progress-text" id="progress-text">0/5</span>
+            </div>
+        </div>
+
+        <!-- بطاقة السؤال -->
+        <div class="question-card" id="question-card">
+            <div class="question-text" id="question-text">جاري تحميل السؤال...</div>
+            <div class="options-grid" id="options-grid"></div>
+            <button class="btn-next" id="btn-next" onclick="nextQuestion()">التالي ←</button>
+        </div>
+
+        <!-- بطاقة النتيجة -->
+        <div class="result-card" id="result-card">
+            <div class="result-emoji" id="result-emoji">🎉</div>
+            <div class="result-score" id="result-score">0/5</div>
+            <div class="result-text" id="result-text">أحسنت! استمر في التقدم</div>
+            <button class="btn-retry" onclick="retryQuiz()">🔄 إعادة الكويز</button>
+        </div>
+    </div>
+
+    <script>
+        if (sessionStorage.getItem("atlas_auth") !== "true") {
+            window.location.href = "index.html";
+        }
+
+        // أسئلة الكويز (يمكن تعديلها لاحقاً حسب الدرس)
+        const quizQuestions = [
+            {
+                question: "ما هي عاصمة مصر؟",
+                options: ["الإسكندرية", "القاهرة", "أسوان", "الأقصر"],
+                correct: 1
+            },
+            {
+                question: "أين يقع نهر النيل؟",
+                options: ["في آسيا", "في أوروبا", "في أفريقيا", "في أمريكا"],
+                correct: 2
+            },
+            {
+                question: "ما هو أكبر محيط في العالم؟",
+                options: ["المحيط الأطلسي", "المحيط الهندي", "المحيط الهادي", "المحيط المتجمد"],
+                correct: 2
+            },
+            {
+                question: "كم عدد القارات في العالم؟",
+                options: ["5", "6", "7", "8"],
+                correct: 2
+            },
+            {
+                question: "ما هي أكبر قارة في العالم؟",
+                options: ["أفريقيا", "أمريكا الشمالية", "آسيا", "أوروبا"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let selectedOption = null;
+
+        function initQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            selectedOption = null;
+            
+            document.getElementById('question-card').style.display = 'block';
+            document.getElementById('result-card').style.display = 'none';
+            document.getElementById('quiz-header').style.display = 'block';
+            
+            loadQuestion();
+            
+            // أنيميشن
+            anime({
+                targets: '#question-card',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                easing: 'easeOutCubic',
+                duration: 500,
+            });
+        }
+
+        function loadQuestion() {
+            if (currentQuestion >= quizQuestions.length) {
+                showResult();
+                return;
+            }
+
+            answered = false;
+            selectedOption = null;
+            const q = quizQuestions[currentQuestion];
+            
+            document.getElementById('question-text').textContent = q.question;
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('progress-text').textContent = `${currentQuestion + 1}/${quizQuestions.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentQuestion + 1) / quizQuestions.length) * 100}%`;
+            
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = function() { selectOption(index, btn); };
+                optionsGrid.appendChild(btn);
+            });
+
+            // أنيميشن الخيارات
+            anime({
+                targets: '.option-btn',
+                opacity: [0, 1],
+                translateY: [10, 0],
+                easing: 'easeOutQuad',
+                duration: 400,
+                delay: anime.stagger(80),
+            });
+        }
+
+        function selectOption(index, btn) {
+            if (answered) return;
+            
+            answered = true;
+            selectedOption = index;
+            const q = quizQuestions[currentQuestion];
+            
+            // إزالة تحديد الكل
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            
+            // التحقق من الإجابة
+            if (index === q.correct) {
+                btn.classList.add('correct');
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                // إظهار الإجابة الصحيحة
+                const options = document.querySelectorAll('.option-btn');
+                options[q.correct].classList.add('correct');
+            }
+            
+            // تعطيل جميع الأزرار
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+            
+            // إظهار زر التالي
+            const nextBtn = document.getElementById('btn-next');
+            nextBtn.style.display = 'block';
+            anime({
+                targets: nextBtn,
+                opacity: [0, 1],
+                translateY: [10, 0],
+                easing: 'easeOutQuad',
+                duration: 300,
+            });
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+            
+            // أنيميشن انتقال
+            anime({
+                targets: '#question-card',
+                opacity: [1, 0.5, 1],
+                scale: [1, 0.98, 1],
+                easing: 'easeInOutQuad',
+                duration: 400,
+            });
+        }
+
+        function showResult() {
+            document.getElementById('question-card').style.display = 'none';
+            document.getElementById('quiz-header').style.display = 'none';
+            
+            const resultCard = document.getElementById('result-card');
+            resultCard.style.display = 'block';
+            
+            document.getElementById('result-score').textContent = `${score}/${quizQuestions.length}`;
+            
+            const percentage = (score / quizQuestions.length) * 100;
+            let emoji, text;
+            if (percentage >= 80) {
+                emoji = '🏆';
+                text = 'ممتاز! أداء رائع، استمر في التقدم';
+            } else if (percentage >= 60) {
+                emoji = '👏';
+                text = 'جيد جداً! يمكنك التحسن أكثر';
+            } else if (percentage >= 40) {
+                emoji = '📚';
+                text = 'لا بأس، راجع الدرس وحاول مرة أخرى';
+            } else {
+                emoji = '💪';
+                text = 'تحتاج للمزيد من المذاكرة، لا تيأس!';
+            }
+            
+            document.getElementById('result-emoji').textContent = emoji;
+            document.getElementById('result-text').textContent = text;
+            
+            // أنيميشن النتيجة
+            anime({
+                targets: resultCard,
+                opacity: [0, 1],
+                scale: [0.9, 1],
+                easing: 'easeOutElastic(1, .6)',
+                duration: 800,
+            });
+            
+            // أنيميشن العداد
+            anime({
+                targets: document.getElementById('result-score'),
+                innerHTML: [0, score],
+                easing: 'easeOutExpo',
+                duration: 1500,
+                round: 1,
+                update: function(anim) {
+                    document.getElementById('result-score').textContent = `${Math.round(anim.animations[0].currentValue)}/${quizQuestions.length}`;
+                }
+            });
+        }
+
+        function retryQuiz() {
+            const resultCard = document.getElementById('result-card');
+            anime({
+                targets: resultCard,
+                opacity: [1, 0],
+                scale: [1, 0.9],
+                easing: 'easeInQuad',
+                duration: 300,
+                complete: function() {
+                    resultCard.style.display = 'none';
+                    document.getElementById('quiz-header').style.display = 'block';
+                    initQuiz();
+                }
+            });
+        }
+
+        function goBack() {
+            window.location.href = "lesson.html";
+        }
+
+        // بدء الكويز
+        initQuiz();
+    </script>
+</body>
+</html>
