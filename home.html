@@ -13,13 +13,6 @@
     <style>
         :root {
             --bg-deep: #06060f;
-            --card-bg: rgba(255, 255, 255, 0.06);
-            --accent-1: #8b5cf6;
-            --accent-2: #6366f1;
-            --accent-3: #3b82f6;
-            --accent-4: #10b981;
-            --accent-5: #f59e0b;
-            --accent-6: #ef4444;
         }
 
         * {
@@ -57,8 +50,8 @@
             z-index: 0;
             opacity: 0.03;
             background-image:
-                linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+                linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
             background-size: 50px 50px;
             mask-image: radial-gradient(ellipse at center, black 25%, transparent 70%);
         }
@@ -109,12 +102,12 @@
         /* الهيدر */
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             animation: fadeInDown 1s ease;
         }
         .header-logo {
-            width: 80px;
-            height: 80px;
+            width: 85px;
+            height: 85px;
             background: linear-gradient(135deg, #8b5cf6, #6366f1, #3b82f6);
             border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
             display: flex;
@@ -127,7 +120,7 @@
         .header-logo span {
             color: #fff;
             font-family: 'El Messiri', sans-serif;
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 700;
         }
         @keyframes morphLogo {
@@ -136,7 +129,7 @@
         }
         .header h1 {
             color: #fff;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 800;
             margin: 0;
             text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
@@ -144,24 +137,25 @@
         .header p {
             color: #94a3b8;
             font-size: 0.85rem;
-            margin: 5px 0 0;
+            margin: 8px 0 0;
             font-weight: 600;
         }
         .user-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 30px;
-            padding: 6px 16px;
+            padding: 8px 20px;
             color: #cbd5e1;
             font-size: 0.8rem;
             font-weight: 600;
-            margin-top: 12px;
+            margin-top: 15px;
         }
         .user-badge i {
             color: #34d399;
+            font-size: 0.6rem;
         }
 
         /* شبكة الأزرار */
@@ -169,7 +163,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 18px;
-            max-width: 700px;
+            max-width: 750px;
             width: 100%;
             margin-top: 10px;
         }
@@ -180,7 +174,7 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 24px;
-            padding: 25px 15px;
+            padding: 28px 15px;
             text-align: center;
             cursor: pointer;
             transition: all 0.4s;
@@ -190,7 +184,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             opacity: 0;
             transform: translateY(30px);
         }
@@ -201,7 +195,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
             opacity: 0;
             transition: opacity 0.4s;
         }
@@ -209,43 +203,44 @@
             opacity: 1;
         }
         .grade-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
             border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
         .grade-card:active {
             transform: scale(0.95);
         }
 
         .grade-icon {
-            width: 55px;
-            height: 55px;
+            width: 60px;
+            height: 60px;
             border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: #fff;
             position: relative;
             z-index: 2;
         }
-        .grade-card:nth-child(1) .grade-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        .grade-card:nth-child(2) .grade-icon { background: linear-gradient(135deg, #6366f1, #4f46e5); }
-        .grade-card:nth-child(3) .grade-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .grade-card:nth-child(4) .grade-icon { background: linear-gradient(135deg, #10b981, #059669); }
-        .grade-card:nth-child(5) .grade-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .grade-card:nth-child(6) .grade-icon { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        /* ألوان الأيقونات حسب الصف */
+        .grade-card:nth-child(1) .grade-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); }
+        .grade-card:nth-child(2) .grade-icon { background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4); }
+        .grade-card:nth-child(3) .grade-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); }
+        .grade-card:nth-child(4) .grade-icon { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
+        .grade-card:nth-child(5) .grade-icon { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); }
+        .grade-card:nth-child(6) .grade-icon { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4); }
 
         .grade-name {
             color: #fff;
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 1rem;
             z-index: 2;
             line-height: 1.4;
         }
         .grade-desc {
             color: #94a3b8;
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 600;
             z-index: 2;
         }
@@ -268,22 +263,28 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 1rem;
+            border: none;
+            outline: none;
         }
         .logout-btn:hover {
             background: rgba(239, 68, 68, 0.3);
             color: #fecaca;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
         }
 
         /* التذييل */
         .footer {
             text-align: center;
             color: #64748b;
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 600;
-            margin-top: 30px;
+            margin-top: 35px;
             z-index: 2;
             animation: fadeInUp 1s ease 0.6s both;
+        }
+        .footer a {
+            color: #a5b4fc;
+            text-decoration: none;
         }
 
         @keyframes fadeInDown {
@@ -296,35 +297,37 @@
         }
 
         /* تجاوب */
-        @media (max-width: 640px) {
+        @media (max-width: 700px) {
             .grades-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
+                gap: 14px;
             }
             .grade-card {
-                padding: 20px 10px;
+                padding: 22px 10px;
                 border-radius: 20px;
             }
             .grade-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
-                border-radius: 14px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+                border-radius: 16px;
             }
             .grade-name {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
             }
             .header h1 {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
             }
         }
-        @media (max-width: 380px) {
+        @media (max-width: 400px) {
             .grades-grid {
-                grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
             .grade-card {
-                padding: 16px 8px;
+                padding: 18px 8px;
+            }
+            .grade-name {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -348,70 +351,83 @@
                 <span>اطلس</span>
             </div>
             <h1>منصة الدراسات الاجتماعية</h1>
-            <p>اختر الصف الدراسي للبدء</p>
+            <p>اختر الصف الدراسي للبدء في رحلة التعلم</p>
             <div class="user-badge" id="user-badge">
                 <i class="fas fa-circle"></i>
                 <span id="username-display">مستر إيهاب أشرف</span>
             </div>
         </div>
 
-        <!-- شبكة الصفوف -->
+        <!-- شبكة الصفوف - روابط مباشرة للمجلدات -->
         <div class="grades-grid" id="grades-grid">
-            <div class="grade-card" onclick="navigateToGrade('grade4')">
+            <!-- 1. الصف الرابع الابتدائي -->
+            <a href="grade4/index.html" class="grade-card" onclick="navigateWithEffect(event, this)">
                 <div class="grade-icon"><i class="fas fa-seedling"></i></div>
                 <div class="grade-name">الصف الرابع الابتدائي</div>
                 <div class="grade-desc">الدراسات الاجتماعية</div>
-            </div>
-            <div class="grade-card" onclick="navigateToGrade('grade5')">
+            </a>
+
+            <!-- 2. الصف الخامس الابتدائي -->
+            <a href="grade5/index.html" class="grade-card" onclick="navigateWithEffect(event, this)">
                 <div class="grade-icon"><i class="fas fa-tree"></i></div>
                 <div class="grade-name">الصف الخامس الابتدائي</div>
                 <div class="grade-desc">الدراسات الاجتماعية</div>
-            </div>
-            <div class="grade-card" onclick="navigateToGrade('grade6')">
+            </a>
+
+            <!-- 3. الصف السادس الابتدائي -->
+            <a href="grade6/index.html" class="grade-card" onclick="navigateWithEffect(event, this)">
                 <div class="grade-icon"><i class="fas fa-leaf"></i></div>
                 <div class="grade-name">الصف السادس الابتدائي</div>
                 <div class="grade-desc">الدراسات الاجتماعية</div>
-            </div>
-            <div class="grade-card" onclick="navigateToGrade('prep1')">
+            </a>
+
+            <!-- 4. الصف الأول الإعدادي -->
+            <a href="prep1/index.html" class="grade-card" onclick="navigateWithEffect(event, this)">
                 <div class="grade-icon"><i class="fas fa-compass"></i></div>
                 <div class="grade-name">الصف الأول الإعدادي</div>
                 <div class="grade-desc">الدراسات الاجتماعية</div>
-            </div>
-            <div class="grade-card" onclick="navigateToGrade('prep2')">
+            </a>
+
+            <!-- 5. الصف الثاني الإعدادي -->
+            <a href="prep2/index.html" class="grade-card" onclick="navigateWithEffect(event, this)">
                 <div class="grade-icon"><i class="fas fa-globe-africa"></i></div>
                 <div class="grade-name">الصف الثاني الإعدادي</div>
                 <div class="grade-desc">الدراسات الاجتماعية</div>
-            </div>
-            <div class="grade-card" onclick="navigateToGrade('prep3')">
+            </a>
+
+            <!-- 6. الصف الثالث الإعدادي -->
+            <a href="prep3/index.html" class="grade-card" onclick="navigateWithEffect(event, this)">
                 <div class="grade-icon"><i class="fas fa-landmark"></i></div>
                 <div class="grade-name">الصف الثالث الإعدادي</div>
                 <div class="grade-desc">الدراسات الاجتماعية</div>
-            </div>
+            </a>
         </div>
 
         <!-- التذييل -->
         <div class="footer">
             <span>إعداد وتصميم: أ. إيهاب أشرف</span> •
-            <span style="color: #a5b4fc;">01559116736</span>
+            <a href="https://wa.me/201559116736" target="_blank" rel="noopener">
+                <i class="fab fa-whatsapp"></i> 01559116736
+            </a>
         </div>
     </div>
 
     <script>
-        // التحقق من تسجيل الدخول
+        // ════════════════ التحقق من تسجيل الدخول ════════════════
         if (sessionStorage.getItem("atlas_auth") !== "true") {
             window.location.href = "index.html";
         }
 
-        // عرض اسم المستخدم
+        // ════════════════ عرض اسم المستخدم ════════════════
         const role = sessionStorage.getItem("role") || "student";
         const usernameDisplay = document.getElementById("username-display");
         if (role === "admin") {
-            usernameDisplay.textContent = "أ. إيهاب أشرف | مشرف";
+            usernameDisplay.textContent = "أ. إيهاب أشرف | مشرف المنصة";
         } else {
-            usernameDisplay.textContent = "طالب | منصة أطلس";
+            usernameDisplay.textContent = "طالب | منصة أطلس التعليمية";
         }
 
-        // أنيميشن ظهور البطاقات
+        // ════════════════ أنيميشن ظهور البطاقات ════════════════
         window.addEventListener('load', function() {
             const cards = document.querySelectorAll('.grade-card');
             anime({
@@ -420,39 +436,41 @@
                 translateY: [30, 0],
                 easing: 'easeOutCubic',
                 duration: 600,
-                delay: anime.stagger(100, {start: 300}),
+                delay: anime.stagger(100, { start: 300 }),
             });
         });
 
-        // التنقل لصفحة الصف
-        function navigateToGrade(gradeId) {
-            // حفظ معرف الصف والانتقال
-            sessionStorage.setItem("currentGrade", gradeId);
+        // ════════════════ تأثير النقر على البطاقات ════════════════
+        function navigateWithEffect(event, el) {
+            event.preventDefault(); // منع الانتقال الفوري
+            const href = el.getAttribute('href');
             
-            // تأثير النقر
-            const card = event.currentTarget;
+            // تأثير ضغط على البطاقة
             anime({
-                targets: card,
-                scale: [1, 0.92, 1.05, 1],
+                targets: el,
+                scale: [1, 0.92, 1.06, 1],
                 easing: 'easeInOutQuad',
                 duration: 400,
                 complete: function() {
-                    window.location.href = "grade.html";
+                    // الانتقال بعد انتهاء التأثير
+                    window.location.href = href;
                 }
             });
         }
 
-        // تسجيل الخروج
+        // ════════════════ تسجيل الخروج ════════════════
         function handleLogout() {
             Swal.fire({
                 title: 'تسجيل الخروج',
-                text: 'هل أنت متأكد من الخروج؟',
+                text: 'هل أنت متأكد من الخروج من المنصة؟',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'نعم، اخرج',
                 cancelButtonText: 'إلغاء',
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#64748b',
+                background: '#1e1b4b',
+                color: '#e2e8f0',
             }).then((result) => {
                 if (result.isConfirmed) {
                     sessionStorage.clear();
