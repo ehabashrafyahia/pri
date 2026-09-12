@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>كويز أرينا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg-deep:#15152E;
+    --bg-panel:#1F1F42;
+    --amber:#FFB627;
+    --coral:#FF6B6B;
+    --teal:#4ECDC4;
+    --lime:#A8E10C;
+    --ink:#F7F7F2;
+  }
+  html,body{ font-family:'Cairo', sans-serif; background:var(--bg-deep); color:var(--ink); }
+  .glow{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(600px 400px at 15% 10%, rgba(255,182,39,.12), transparent 60%),
+      radial-gradient(500px 400px at 85% 90%, rgba(78,205,196,.12), transparent 60%);
+  }
+  .code-input{ letter-spacing:.35em; }
+  .btn-press:active{ transform: translateY(2px); }
+</style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden">
+<div class="glow"></div>
+
+<main class="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-10">
+
+  <!-- الشعار -->
+  <div class="mb-10 text-center">
+    <div class="inline-flex items-center gap-3 mb-2">
+      <span class="text-5xl">🏆</span>
+      <h1 class="text-4xl sm:text-5xl font-black tracking-tight">كويز <span style="color:var(--amber)">أرينا</span></h1>
+    </div>
+    <p class="text-white/50 text-sm">ادخل الكود من شاشة معلمك وابدأ اللعب</p>
+  </div>
+
+  <!-- بطاقة الانضمام -->
+  <form id="joinForm" class="w-full max-w-sm rounded-3xl p-7 space-y-5"
+        style="background:var(--bg-panel); box-shadow: 0 20px 60px rgba(0,0,0,.35);">
+
+    <div>
+      <label class="block text-sm text-white/60 mb-2">كود الغرفة</label>
+      <input id="roomCode" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
+             class="code-input w-full text-center text-3xl font-black rounded-2xl py-4 bg-white/5 border-2 border-white/10 focus:border-[var(--amber)] outline-none transition-colors"
+             required>
+    </div>
+
+    <div>
+      <label class="block text-sm text-white/60 mb-2">اسمك</label>
+      <input id="playerName" type="text" maxlength="20" placeholder="مثال: يوسف"
+             class="w-full text-lg rounded-2xl py-3 px-4 bg-white/5 border-2 border-white/10 focus:border-[var(--amber)] outline-none transition-colors"
+             required>
+    </div>
+
+    <p id="errorMsg" class="hidden text-sm text-center rounded-xl py-2 px-3" style="background:rgba(255,107,107,.15); color:var(--coral);"></p>
+
+    <button type="submit" id="joinBtn" class="btn-press w-full rounded-2xl py-4 text-lg font-bold transition-transform"
+            style="background:var(--amber); color:var(--bg-deep);">
+      انضم للعبة
+    </button>
+  </form>
+
+  <a href="host.html" class="mt-8 text-white/40 text-sm hover:text-white/70 transition-colors">أنا معلم، عايز أبدأ جلسة →</a>
+</main>
+
+<script type="module">
+  import { joinRoom } from "./firebase-config.js";
+
+  const form = document.getElementById('joinForm');
+  const errorMsg = document.getElementById('errorMsg');
+  const joinBtn = document.getElementById('joinBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg.classList.add('hidden');
+
+    const roomCode = document.getElementById('roomCode').value.trim();
+    const playerName = document.getElementById('playerName').value.trim();
+
+    joinBtn.disabled = true;
+    joinBtn.textContent = "جاري الدخول...";
+
+    try {
+      const playerId = await joinRoom(roomCode, playerName);
+      sessionStorage.setItem('roomCode', roomCode);
+      sessionStorage.setItem('playerId', playerId);
+      sessionStorage.setItem('playerName', playerName);
+      window.location.href = 'play.html';
+    } catch (err) {
+      let msg = "حصل خطأ، حاول تاني";
+      if (err.message === 'ROOM_NOT_FOUND') msg = "الكود ده مش موجود، اتأكد منه";
+      if (err.message === 'ROOM_ALREADY_STARTED') msg = "اللعبة دي بدأت بالفعل";
+      errorMsg.textContent = msg;
+      errorMsg.classList.remove('hidden');
+      joinBtn.disabled = false;
+      joinBtn.textContent = "انضم للعبة";
+    }
+  });
+</script>
+</body>
+</html>
