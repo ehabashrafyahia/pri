@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>كويز أرينا — شاشة المعلم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg-deep:#15152E; --bg-panel:#1F1F42;
+    --amber:#FFB627; --coral:#FF6B6B; --teal:#4ECDC4; --lime:#A8E10C;
+    --ink:#F7F7F2;
+  }
+  html,body{ font-family:'Cairo', sans-serif; background:var(--bg-deep); color:var(--ink); }
+  .glow{ position:fixed; inset:0; z-index:0; pointer-events:none;
+    background: radial-gradient(600px 400px at 15% 10%, rgba(255,182,39,.10), transparent 60%),
+                radial-gradient(500px 400px at 85% 90%, rgba(78,205,196,.10), transparent 60%); }
+  .screen{ display:none; }
+  .screen.active{ display:flex; }
+  .shape-tri{ clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+  .shape-diamond{ clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+  textarea{ resize:vertical; }
+  .pulse-ring{ animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:.5 } 50%{ opacity:1 } }
+</style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden">
+<div class="glow"></div>
+
+<!-- ============ شاشة 1: لصق الأسئلة ============ -->
+<section id="screen-setup" class="screen active relative z-10 min-h-screen flex-col items-center justify-center px-6 py-10">
+  <div class="w-full max-w-2xl">
+    <h1 class="text-3xl font-black mb-1 text-center">🏆 كويز أرينا <span class="text-white/40 text-lg font-normal">— لوحة المعلم</span></h1>
+    <p class="text-white/50 text-sm text-center mb-6">الصق أسئلتك بنفس صيغة بنك الأسئلة عندك (رقم) نص، أ) ب) ج) د) اختيارات، وسطر "الإجابة: رقم" في الآخر</p>
+
+    <textarea id="questionsInput" rows="14"
+      class="w-full rounded-2xl p-4 bg-white/5 border-2 border-white/10 focus:border-[var(--amber)] outline-none text-sm leading-relaxed"
+      placeholder="1) ظهرت النقوش البارزة واستُخدمت الألوان في:
+أ) تصميم الصور الجدارية بالمعابد
+ب) المنازل فقط
+ج) السفن الحربية
+د) الأدوات الزراعية
+الإجابة: 1
+
+2) من قائد معركة عين جالوت؟
+أ) سيف الدين قطز
+ب) الملك المظفر قطز
+ج) صلاح الدين الأيوبي
+د) عمرو بن العاص
+الإجابة: 2"></textarea>
+
+    <div class="flex items-center gap-3 mt-4">
+      <label class="text-sm text-white/60">ثواني لكل سؤال:</label>
+      <input id="timeLimit" type="number" value="20" min="5" max="120"
+        class="w-20 rounded-xl py-2 px-3 bg-white/5 border-2 border-white/10 outline-none text-center">
+    </div>
+
+    <p id="parseError" class="hidden mt-3 text-sm rounded-xl py-2 px-3" style="background:rgba(255,107,107,.15); color:var(--coral);"></p>
+    <p id="parseSuccess" class="hidden mt-3 text-sm rounded-xl py-2 px-3" style="background:rgba(168,225,12,.12); color:var(--lime);"></p>
+
+    <button id="createRoomBtn" class="w-full mt-5 rounded-2xl py-4 text-lg font-bold" style="background:var(--amber); color:var(--bg-deep);">
+      إنشاء الغرفة
+    </button>
+  </div>
+</section>
+
+<!-- ============ شاشة 2: غرفة الانتظار ============ -->
+<section id="screen-waiting" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 py-10">
+  <p class="text-white/50 mb-2">ادخلوا على الرابط وحطوا الكود:</p>
+  <div class="text-6xl sm:text-7xl font-black tracking-[.2em] mb-8" style="color:var(--amber)" id="roomCodeDisplay">------</div>
+
+  <div class="w-full max-w-3xl">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-bold text-white/70">الطلاب المنضمين</h2>
+      <span id="playerCount" class="rounded-full px-3 py-1 text-sm font-bold" style="background:var(--teal); color:var(--bg-deep);">0</span>
+    </div>
+    <div id="playersList" class="flex flex-wrap gap-3 min-h-[80px] rounded-2xl p-4" style="background:var(--bg-panel);"></div>
+  </div>
+
+  <button id="startGameBtn" class="mt-8 rounded-2xl py-4 px-10 text-lg font-bold" style="background:var(--lime); color:var(--bg-deep);">
+    ابدأ اللعبة 🚀
+  </button>
+</section>
+
+<!-- ============ شاشة 3: السؤال الحالي ============ -->
+<section id="screen-question" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 py-8">
+  <div class="w-full max-w-4xl flex items-center justify-between mb-6">
+    <span id="qCounter" class="text-white/50 font-bold">سؤال 1 / 10</span>
+    <div id="timer" class="text-3xl font-black rounded-full w-16 h-16 flex items-center justify-center" style="background:var(--bg-panel);">20</div>
+    <span id="answeredCount" class="text-white/50 font-bold">0 إجابة</span>
+  </div>
+
+  <h2 id="questionText" class="text-2xl sm:text-4xl font-black text-center mb-10 max-w-3xl">نص السؤال هنا</h2>
+
+  <div class="grid grid-cols-2 gap-4 w-full max-w-3xl" id="choicesGrid">
+    <!-- 4 اختيارات تتولد ديناميكيًا -->
+  </div>
+</section>
+
+<!-- ============ شاشة 4: كشف الإجابة ============ -->
+<section id="screen-reveal" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 py-8">
+  <h2 class="text-2xl font-bold mb-2 text-white/60">الإجابة الصحيحة</h2>
+  <p id="correctAnswerText" class="text-3xl sm:text-4xl font-black mb-10 text-center" style="color:var(--lime)"></p>
+  <div id="statsBar" class="w-full max-w-2xl space-y-3 mb-10"></div>
+  <button id="showLeaderboardBtn" class="rounded-2xl py-4 px-10 text-lg font-bold" style="background:var(--amber); color:var(--bg-deep);">
+    لوحة الصدارة
+  </button>
+</section>
+
+<!-- ============ شاشة 5: لوحة الصدارة ============ -->
+<section id="screen-leaderboard" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 py-8">
+  <h2 class="text-3xl font-black mb-8">🏆 لوحة الصدارة</h2>
+  <div id="leaderboardList" class="w-full max-w-xl space-y-3 mb-10"></div>
+  <button id="nextBtn" class="rounded-2xl py-4 px-10 text-lg font-bold" style="background:var(--teal); color:var(--bg-deep);">
+    السؤال التالي →
+  </button>
+</section>
+
+<script type="module">
+  import { db, ref, onValue, set, update, get, generateRoomCode, createRoom, serverTimestamp } from "./firebase-config.js";
+
+  let roomCode = null;
+  let questions = [];
+  let timerInterval = null;
+  let currentIndex = -1;
+  let roomListenerUnsub = null;
+
+  const CHOICE_STYLES = [
+    { color: 'var(--coral)', shape: '▲' },
+    { color: 'var(--teal)',  shape: '●' },
+    { color: 'var(--amber)', shape: '■' },
+    { color: 'var(--lime)',  shape: '◆' },
+  ];
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // ---------- تحليل نص الأسئلة الملصوق ----------
+  // الصيغة المتوقعة لكل سؤال:
+  // 1) نص السؤال
+  // أ) اختيار
+  // ب) اختيار
+  // ج) اختيار
+  // د) اختيار
+  // الإجابة: 1   (رقم ترتيب الاختيار الصح: 1=أ، 2=ب، 3=ج، 4=د)
+  const LETTER_PREFIX = /^[أابجد]\s*[-)ـ.]\s*/;   // أ) أو ا) حسب الاستخدام
+  const NUMBER_PREFIX = /^\d+\s*[-)ـ.]\s*/;        // 1) أو 1-
+  const ANSWER_LINE = /^الإجابة\s*[:：]\s*(\d+)/;
+
+  function parseQuestions(raw, timeLimit) {
+    const blocks = raw.trim().split(/\n\s*\n/).filter(b => b.trim());
+    const parsed = [];
+    for (const block of blocks) {
+      const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+      if (lines.length < 4) throw new Error(`سؤال ناقص بيانات:\n"${lines[0] || '؟'}"`);
+
+      // آخر سطر لازم يكون "الإجابة: N"
+      const answerMatch = lines[lines.length - 1].match(ANSWER_LINE);
+      if (!answerMatch) throw new Error(`السؤال "${lines[0]}" مفيهوش سطر "الإجابة: رقم" في الآخر`);
+      const correctNumber = parseInt(answerMatch[1], 10);
+
+      const questionText = lines[0].replace(NUMBER_PREFIX, '').trim();
+      const choiceLines = lines.slice(1, lines.length - 1);
+      if (choiceLines.length < 2) throw new Error(`السؤال "${questionText}" محتاج اختيارين على الأقل`);
+
+      const choices = choiceLines.map(c => c.replace(LETTER_PREFIX, '').trim());
+      const correctIndex = correctNumber - 1;
+      if (correctIndex < 0 || correctIndex >= choices.length) {
+        throw new Error(`السؤال "${questionText}": رقم الإجابة (${correctNumber}) مش موجود ضمن الاختيارات`);
+      }
+
+      parsed.push({ text: questionText, choices, correctIndex, timeLimit: Number(timeLimit) || 20 });
+    }
+    if (parsed.length === 0) throw new Error('محتاج سؤال واحد على الأقل');
+    return parsed;
+  }
+
+  // ---------- شاشة 1: إنشاء الغرفة ----------
+  document.getElementById('createRoomBtn').addEventListener('click', async () => {
+    const raw = document.getElementById('questionsInput').value;
+    const timeLimit = document.getElementById('timeLimit').value;
+    const errorEl = document.getElementById('parseError');
+    const successEl = document.getElementById('parseSuccess');
+    errorEl.classList.add('hidden');
+    successEl.classList.add('hidden');
+
+    try {
+      questions = parseQuestions(raw, timeLimit);
+      successEl.textContent = `تم تحليل ${questions.length} سؤال بنجاح، جاري إنشاء الغرفة...`;
+      successEl.classList.remove('hidden');
+
+      roomCode = await generateRoomCode();
+      await createRoom(roomCode, questions);
+
+      document.getElementById('roomCodeDisplay').textContent = roomCode;
+      showScreen('screen-waiting');
+      listenToPlayers();
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.classList.remove('hidden');
+    }
+  });
+
+  // ---------- شاشة 2: متابعة انضمام الطلاب لحظيًا ----------
+  function listenToPlayers() {
+    const playersRef = ref(db, `rooms/${roomCode}/players`);
+    onValue(playersRef, (snap) => {
+      const players = snap.val() || {};
+      const ids = Object.keys(players);
+      document.getElementById('playerCount').textContent = ids.length;
+      document.getElementById('playersList').innerHTML = ids.map(id =>
+        `<span class="rounded-full px-4 py-2 font-bold text-sm" style="background:var(--bg-deep)">${players[id].name}</span>`
+      ).join('') || '<span class="text-white/30">لسه محدش دخل...</span>';
+    });
+  }
+
+  // ---------- بدء اللعبة ----------
+  document.getElementById('startGameBtn').addEventListener('click', async () => {
+    currentIndex = 0;
+    await startQuestion(currentIndex);
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', async () => {
+    currentIndex++;
+    if (currentIndex >= questions.length) {
+      await update(ref(db, `rooms/${roomCode}`), { status: 'ended' });
+      showFinalMessage();
+    } else {
+      await startQuestion(currentIndex);
+    }
+  });
+
+  document.getElementById('showLeaderboardBtn').addEventListener('click', showLeaderboard);
+
+  // ---------- عرض سؤال ----------
+  async function startQuestion(index) {
+    const q = questions[index];
+    await update(ref(db, `rooms/${roomCode}`), {
+      status: 'question',
+      currentQuestionIndex: index,
+      questionStartTime: Date.now()
+    });
+
+    document.getElementById('qCounter').textContent = `سؤال ${index + 1} / ${questions.length}`;
+    document.getElementById('questionText').textContent = q.text;
+
+    const grid = document.getElementById('choicesGrid');
+    grid.innerHTML = q.choices.map((c, i) => `
+      <div class="rounded-2xl p-5 flex items-center gap-3 font-bold text-lg" style="background:${CHOICE_STYLES[i].color}; color:var(--bg-deep);">
+        <span class="text-2xl">${CHOICE_STYLES[i].shape}</span> ${c}
+      </div>
+    `).join('');
+
+    showScreen('screen-question');
+    runTimer(q.timeLimit);
+    listenAnswerCount(index);
+  }
+
+  function runTimer(seconds) {
+    clearInterval(timerInterval);
+    let remaining = seconds;
+    const timerEl = document.getElementById('timer');
+    timerEl.textContent = remaining;
+    timerInterval = setInterval(() => {
+      remaining--;
+      timerEl.textContent = Math.max(remaining, 0);
+      if (remaining <= 0) {
+        clearInterval(timerInterval);
+        revealAnswer(currentIndex);
+      }
+    }, 1000);
+  }
+
+  function listenAnswerCount(index) {
+    const answersRef = ref(db, `rooms/${roomCode}/answers/${index}`);
+    onValue(answersRef, (snap) => {
+      const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+      document.getElementById('answeredCount').textContent = `${count} إجابة`;
+    });
+  }
+
+  // ---------- كشف الإجابة وتحديث النقاط ----------
+  async function revealAnswer(index) {
+    clearInterval(timerInterval);
+    const q = questions[index];
+    const answersSnap = await get(ref(db, `rooms/${roomCode}/answers/${index}`));
+    const answers = answersSnap.val() || {};
+    const playersSnap = await get(ref(db, `rooms/${roomCode}/players`));
+    const players = playersSnap.val() || {};
+
+    const counts = [0, 0, 0, 0];
+    const updates = {};
+    for (const [playerId, ans] of Object.entries(answers)) {
+      if (ans.choiceIndex >= 0 && ans.choiceIndex < 4) counts[ans.choiceIndex]++;
+      if (ans.choiceIndex === q.correctIndex) {
+        const speedBonus = Math.max(0, 1 - (ans.timeMs / (q.timeLimit * 1000)));
+        const points = Math.round(500 + 500 * speedBonus);
+        const current = players[playerId]?.score || 0;
+        updates[`rooms/${roomCode}/players/${playerId}/score`] = current + points;
+      }
+    }
+    if (Object.keys(updates).length) await update(ref(db), updates);
+
+    await update(ref(db, `rooms/${roomCode}`), { status: 'reveal' });
+
+    document.getElementById('correctAnswerText').textContent =
+      `${CHOICE_STYLES[q.correctIndex].shape} ${q.choices[q.correctIndex]}`;
+
+    const totalAnswers = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
+    document.getElementById('statsBar').innerHTML = q.choices.map((c, i) => `
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span>${CHOICE_STYLES[i].shape} ${c}</span><span>${counts[i]}</span></div>
+        <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden">
+          <div class="h-full rounded-full" style="width:${(counts[i]/totalAnswers*100)}%; background:${CHOICE_STYLES[i].color};"></div>
+        </div>
+      </div>
+    `).join('');
+
+    showScreen('screen-reveal');
+  }
+
+  // ---------- لوحة الصدارة ----------
+  async function showLeaderboard() {
+    const playersSnap = await get(ref(db, `rooms/${roomCode}/players`));
+    const players = Object.values(playersSnap.val() || {});
+    players.sort((a, b) => b.score - a.score);
+
+    document.getElementById('leaderboardList').innerHTML = players.slice(0, 10).map((p, i) => `
+      <div class="flex items-center justify-between rounded-2xl px-5 py-3" style="background:var(--bg-panel);">
+        <span class="font-bold"><span class="text-white/40 ml-2">#${i + 1}</span>${p.name}</span>
+        <span class="font-black" style="color:var(--amber)">${p.score}</span>
+      </div>
+    `).join('') || '<p class="text-white/40 text-center">مفيش نتايج لسه</p>';
+
+    document.getElementById('nextBtn').textContent =
+      currentIndex + 1 >= questions.length ? 'إنهاء اللعبة 🏁' : 'السؤال التالي →';
+
+    showScreen('screen-leaderboard');
+  }
+
+  function showFinalMessage() {
+    document.getElementById('leaderboardList').insertAdjacentHTML('afterbegin',
+      '<p class="text-center font-bold mb-4" style="color:var(--lime)">🎉 انتهت اللعبة! دي النتيجة النهائية</p>');
+    document.getElementById('nextBtn').style.display = 'none';
+    showScreen('screen-leaderboard');
+  }
+</script>
+</body>
+</html>
