@@ -85,7 +85,7 @@
 </section>
 
 <script type="module">
-  import { db, ref, onValue, get, submitAnswer } from "./firebase-config.js";
+  import { db, ref, onValue, get, submitAnswer, onDisconnect } from "./firebase-config.js";
 
   const roomCode = sessionStorage.getItem('roomCode');
   const playerId = sessionStorage.getItem('playerId');
@@ -94,6 +94,9 @@
   if (!roomCode || !playerId) {
     window.location.href = 'index.html';
   }
+
+  // يشيل اللاعب تلقائيًا لو قفل الصفحة دي فعليًا (مش أثناء الانتقال بين الصفحات)
+  onDisconnect(ref(db, `rooms/${roomCode}/players/${playerId}`)).remove();
 
   document.getElementById('waitingName').textContent = playerName || '';
 
