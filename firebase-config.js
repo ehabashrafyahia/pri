@@ -74,8 +74,6 @@ export async function joinRoom(roomCode, playerName) {
     score: 0,
     joinedAt: serverTimestamp()
   });
-  // يشيل اللاعب تلقائيًا لو قفل التطبيق فجأة
-  onDisconnect(playerRef).remove();
   return playerRef.key;
 }
 
@@ -97,4 +95,4 @@ export async function deleteRoom(roomCode) {
   await remove(ref(db, `rooms/${roomCode}`));
 }
 
-export { db, ref, onValue, get, set, update, serverTimestamp };
+export { db, ref, onValue, get, set, update, serverTimestamp, onDisconnect };
