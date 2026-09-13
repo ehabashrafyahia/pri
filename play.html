@@ -42,6 +42,7 @@
   <div class="flex items-center justify-between mb-4">
     <span id="qCounter" class="text-white/50 font-bold text-sm">سؤال 1</span>
     <div id="timer" class="text-xl font-black rounded-full w-11 h-11 flex items-center justify-center" style="background:var(--bg-panel);">20</div>
+    <span class="rounded-full px-3 py-1 text-sm font-bold" style="background:var(--amber); color:var(--bg-deep);">⭐ <span id="myScore">0</span></span>
   </div>
   <h2 id="questionText" class="text-xl font-black text-center mb-6 leading-snug">نص السؤال</h2>
   <div class="grid grid-cols-2 gap-3 flex-1" id="choicesGrid"></div>
@@ -127,6 +128,10 @@
       return;
     }
     const room = snap.val();
+
+    const myScore = room.players?.[playerId]?.score || 0;
+    const scoreEl = document.getElementById('myScore');
+    if (scoreEl) scoreEl.textContent = myScore;
 
     if (room.status !== lastStatus || room.currentQuestionIndex !== lastQuestionIndex) {
       lastStatus = room.status;
