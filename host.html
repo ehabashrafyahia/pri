@@ -19,15 +19,32 @@
                 radial-gradient(500px 400px at 85% 90%, rgba(78,205,196,.10), transparent 60%); }
   .screen{ display:none; }
   .screen.active{ display:flex; }
-  .shape-tri{ clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
-  .shape-diamond{ clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
   textarea{ resize:vertical; }
-  .pulse-ring{ animation: pulse 2s ease-in-out infinite; }
-  @keyframes pulse{ 0%,100%{ opacity:.5 } 50%{ opacity:1 } }
+  .bounce{ animation: bounce 1.4s ease-in-out infinite; }
+  @keyframes bounce{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
+
+  /* الشريط الجانبي الثابت للوحة الصدارة */
+  #sidebar{
+    position:fixed; inset-inline-start:0; top:0; bottom:0; width:280px; z-index:20;
+    background:var(--bg-panel); border-inline-end:1px solid rgba(255,255,255,.08);
+    padding:1.25rem; overflow-y:auto; display:none;
+  }
+  #sidebar.active{ display:block; }
+  body.with-sidebar .screen{ padding-inline-start: 300px; }
+  .bar-row{ transition: all .4s ease; }
+  .bar-track{ background: rgba(255,255,255,.06); border-radius: 999px; overflow:hidden; height:10px; }
+  .bar-fill{ height:100%; border-radius:999px; transition: width .5s ease; }
 </style>
 </head>
 <body class="min-h-screen relative overflow-x-hidden">
 <div class="glow"></div>
+
+<!-- ============ الشريط الجانبي: لوحة الصدارة الحية ============ -->
+<aside id="sidebar">
+  <h3 class="font-bold text-white/70 mb-1 flex items-center gap-2">📊 لوحة الصدارة</h3>
+  <p class="text-xs text-white/40 mb-4"><span id="sidebarCount">0</span> طالب</p>
+  <div id="sidebarBars" class="space-y-4"></div>
+</aside>
 
 <!-- ============ شاشة 1: لصق الأسئلة ============ -->
 <section id="screen-setup" class="screen active relative z-10 min-h-screen flex-col items-center justify-center px-6 py-10">
@@ -70,16 +87,9 @@
 <section id="screen-waiting" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 py-10">
   <p class="text-white/50 mb-2">ادخلوا على الرابط وحطوا الكود:</p>
   <div class="text-6xl sm:text-7xl font-black tracking-[.2em] mb-8" style="color:var(--amber)" id="roomCodeDisplay">------</div>
+  <p class="text-white/40 text-sm mb-8">تابع الطلاب وهما بينضموا في الشريط الجانبي 👈</p>
 
-  <div class="w-full max-w-3xl">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="font-bold text-white/70">الطلاب المنضمين</h2>
-      <span id="playerCount" class="rounded-full px-3 py-1 text-sm font-bold" style="background:var(--teal); color:var(--bg-deep);">0</span>
-    </div>
-    <div id="playersList" class="flex flex-wrap gap-3 min-h-[80px] rounded-2xl p-4" style="background:var(--bg-panel);"></div>
-  </div>
-
-  <button id="startGameBtn" class="mt-8 rounded-2xl py-4 px-10 text-lg font-bold" style="background:var(--lime); color:var(--bg-deep);">
+  <button id="startGameBtn" class="rounded-2xl py-4 px-10 text-lg font-bold" style="background:var(--lime); color:var(--bg-deep);">
     ابدأ اللعبة 🚀
   </button>
 </section>
@@ -99,23 +109,21 @@
   </div>
 </section>
 
-<!-- ============ شاشة 4: كشف الإجابة ============ -->
+<!-- ============ شاشة 4: كشف الإجابة ثم التالي مباشرة ============ -->
 <section id="screen-reveal" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 py-8">
   <h2 class="text-2xl font-bold mb-2 text-white/60">الإجابة الصحيحة</h2>
   <p id="correctAnswerText" class="text-3xl sm:text-4xl font-black mb-10 text-center" style="color:var(--lime)"></p>
   <div id="statsBar" class="w-full max-w-2xl space-y-3 mb-10"></div>
-  <button id="showLeaderboardBtn" class="rounded-2xl py-4 px-10 text-lg font-bold" style="background:var(--amber); color:var(--bg-deep);">
-    لوحة الصدارة
-  </button>
-</section>
-
-<!-- ============ شاشة 5: لوحة الصدارة ============ -->
-<section id="screen-leaderboard" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 py-8">
-  <h2 class="text-3xl font-black mb-8">🏆 لوحة الصدارة</h2>
-  <div id="leaderboardList" class="w-full max-w-xl space-y-3 mb-10"></div>
   <button id="nextBtn" class="rounded-2xl py-4 px-10 text-lg font-bold" style="background:var(--teal); color:var(--bg-deep);">
     السؤال التالي →
   </button>
+</section>
+
+<!-- ============ شاشة 5: نهاية اللعبة ============ -->
+<section id="screen-final" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 py-8 text-center">
+  <div class="text-7xl mb-4 bounce">🏁</div>
+  <h2 class="text-3xl font-black mb-3">انتهت اللعبة!</h2>
+  <p class="text-white/50">النتيجة النهائية في لوحة الصدارة 👈</p>
 </section>
 
 <script type="module">
@@ -125,7 +133,6 @@
   let questions = [];
   let timerInterval = null;
   let currentIndex = -1;
-  let roomListenerUnsub = null;
 
   const CHOICE_STYLES = [
     { color: 'var(--coral)', shape: '▲' },
@@ -133,6 +140,7 @@
     { color: 'var(--amber)', shape: '■' },
     { color: 'var(--lime)',  shape: '◆' },
   ];
+  const BAR_COLORS = ['var(--amber)', 'var(--teal)', 'var(--coral)', 'var(--lime)'];
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -140,15 +148,8 @@
   }
 
   // ---------- تحليل نص الأسئلة الملصوق ----------
-  // الصيغة المتوقعة لكل سؤال:
-  // 1) نص السؤال
-  // أ) اختيار
-  // ب) اختيار
-  // ج) اختيار
-  // د) اختيار
-  // الإجابة: 1   (رقم ترتيب الاختيار الصح: 1=أ، 2=ب، 3=ج، 4=د)
-  const LETTER_PREFIX = /^[أابجد]\s*[-)ـ.]\s*/;   // أ) أو ا) حسب الاستخدام
-  const NUMBER_PREFIX = /^\d+\s*[-)ـ.]\s*/;        // 1) أو 1-
+  const LETTER_PREFIX = /^[أابجد]\s*[-)ـ.]\s*/;
+  const NUMBER_PREFIX = /^\d+\s*[-)ـ.]\s*/;
   const ANSWER_LINE = /^الإجابة\s*[:：]\s*(\d+)/;
 
   function parseQuestions(raw, timeLimit) {
@@ -158,7 +159,6 @@
       const lines = block.split('\n').map(l => l.trim()).filter(l => l);
       if (lines.length < 4) throw new Error(`سؤال ناقص بيانات:\n"${lines[0] || '؟'}"`);
 
-      // آخر سطر لازم يكون "الإجابة: N"
       const answerMatch = lines[lines.length - 1].match(ANSWER_LINE);
       if (!answerMatch) throw new Error(`السؤال "${lines[0]}" مفيهوش سطر "الإجابة: رقم" في الآخر`);
       const correctNumber = parseInt(answerMatch[1], 10);
@@ -197,24 +197,38 @@
       await createRoom(roomCode, questions);
 
       document.getElementById('roomCodeDisplay').textContent = roomCode;
+      document.body.classList.add('with-sidebar');
+      document.getElementById('sidebar').classList.add('active');
       showScreen('screen-waiting');
-      listenToPlayers();
+      listenToLeaderboard();
     } catch (err) {
       errorEl.textContent = err.message;
       errorEl.classList.remove('hidden');
     }
   });
 
-  // ---------- شاشة 2: متابعة انضمام الطلاب لحظيًا ----------
-  function listenToPlayers() {
+  // ---------- الشريط الجانبي: لوحة صدارة حية طول الوقت ----------
+  function listenToLeaderboard() {
     const playersRef = ref(db, `rooms/${roomCode}/players`);
     onValue(playersRef, (snap) => {
       const players = snap.val() || {};
-      const ids = Object.keys(players);
-      document.getElementById('playerCount').textContent = ids.length;
-      document.getElementById('playersList').innerHTML = ids.map(id =>
-        `<span class="rounded-full px-4 py-2 font-bold text-sm" style="background:var(--bg-deep)">${players[id].name}</span>`
-      ).join('') || '<span class="text-white/30">لسه محدش دخل...</span>';
+      const list = Object.values(players);
+      document.getElementById('sidebarCount').textContent = list.length;
+
+      const sorted = list.sort((a, b) => (b.score || 0) - (a.score || 0));
+      const maxScore = Math.max(1, ...sorted.map(p => p.score || 0));
+
+      document.getElementById('sidebarBars').innerHTML = sorted.map((p, i) => `
+        <div class="bar-row">
+          <div class="flex justify-between text-xs mb-1">
+            <span class="font-bold truncate">${i === 0 && p.score > 0 ? '👑 ' : ''}${p.name}</span>
+            <span class="text-white/50">${p.score || 0}</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${((p.score||0)/maxScore*100)}%; background:${BAR_COLORS[i % BAR_COLORS.length]};"></div>
+          </div>
+        </div>
+      `).join('') || '<p class="text-white/30 text-sm">لسه محدش دخل...</p>';
     });
   }
 
@@ -224,17 +238,16 @@
     await startQuestion(currentIndex);
   });
 
+  // ---------- زر "السؤال التالي" — بيروح مباشرة من غير شاشة لوحة صدارة منفصلة ----------
   document.getElementById('nextBtn').addEventListener('click', async () => {
     currentIndex++;
     if (currentIndex >= questions.length) {
       await update(ref(db, `rooms/${roomCode}`), { status: 'ended' });
-      showFinalMessage();
+      showScreen('screen-final');
     } else {
       await startQuestion(currentIndex);
     }
   });
-
-  document.getElementById('showLeaderboardBtn').addEventListener('click', showLeaderboard);
 
   // ---------- عرض سؤال ----------
   async function startQuestion(index) {
@@ -283,7 +296,7 @@
     });
   }
 
-  // ---------- كشف الإجابة وتحديث النقاط ----------
+  // ---------- كشف الإجابة وتحديث النقاط (اللوحة الجانبية بتتحدث تلقائيًا) ----------
   async function revealAnswer(index) {
     clearInterval(timerInterval);
     const q = questions[index];
@@ -320,33 +333,10 @@
       </div>
     `).join('');
 
-    showScreen('screen-reveal');
-  }
-
-  // ---------- لوحة الصدارة ----------
-  async function showLeaderboard() {
-    const playersSnap = await get(ref(db, `rooms/${roomCode}/players`));
-    const players = Object.values(playersSnap.val() || {});
-    players.sort((a, b) => b.score - a.score);
-
-    document.getElementById('leaderboardList').innerHTML = players.slice(0, 10).map((p, i) => `
-      <div class="flex items-center justify-between rounded-2xl px-5 py-3" style="background:var(--bg-panel);">
-        <span class="font-bold"><span class="text-white/40 ml-2">#${i + 1}</span>${p.name}</span>
-        <span class="font-black" style="color:var(--amber)">${p.score}</span>
-      </div>
-    `).join('') || '<p class="text-white/40 text-center">مفيش نتايج لسه</p>';
-
     document.getElementById('nextBtn').textContent =
       currentIndex + 1 >= questions.length ? 'إنهاء اللعبة 🏁' : 'السؤال التالي →';
 
-    showScreen('screen-leaderboard');
-  }
-
-  function showFinalMessage() {
-    document.getElementById('leaderboardList').insertAdjacentHTML('afterbegin',
-      '<p class="text-center font-bold mb-4" style="color:var(--lime)">🎉 انتهت اللعبة! دي النتيجة النهائية</p>');
-    document.getElementById('nextBtn').style.display = 'none';
-    showScreen('screen-leaderboard');
+    showScreen('screen-reveal');
   }
 </script>
 </body>
