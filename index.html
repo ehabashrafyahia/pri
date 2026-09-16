@@ -2,73 +2,138 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0F0F23">
+<meta name="description" content="كويز أرينا — لعبة أسئلة تفاعلية مباشرة للفصل">
 <title>كويز أرينا</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  :root{
-    --bg-deep:#15152E;
-    --bg-panel:#1F1F42;
-    --amber:#FFB627;
-    --coral:#FF6B6B;
-    --teal:#4ECDC4;
-    --lime:#A8E10C;
-    --ink:#F7F7F2;
+  :root {
+    --bg-deep: #0F0F23;
+    --bg-panel: #1A1A36;
+    --bg-elevated: #242447;
+    --amber: #FFB627;
+    --amber-dim: rgba(255, 182, 39, 0.15);
+    --coral: #FF6B6B;
+    --teal: #4ECDC4;
+    --lime: #A8E10C;
+    --ink: #F7F7F2;
+    --muted: rgba(247, 247, 242, 0.45);
   }
-  html,body{ font-family:'Cairo', sans-serif; background:var(--bg-deep); color:var(--ink); }
-  .glow{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
+  * { box-sizing: border-box; }
+  html, body {
+    font-family: 'Cairo', system-ui, sans-serif;
+    background: var(--bg-deep);
+    color: var(--ink);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .glow {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background:
-      radial-gradient(600px 400px at 15% 10%, rgba(255,182,39,.12), transparent 60%),
-      radial-gradient(500px 400px at 85% 90%, rgba(78,205,196,.12), transparent 60%);
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(255, 182, 39, 0.14), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 110%, rgba(78, 205, 196, 0.12), transparent 55%);
   }
-  .code-input{ letter-spacing:.35em; }
-  .btn-press:active{ transform: translateY(2px); }
+  .card {
+    background: var(--bg-panel);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  }
+  .input-field {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .input-field:focus {
+    border-color: var(--amber);
+    background: rgba(255,182,39,0.06);
+    box-shadow: 0 0 0 3px var(--amber-dim);
+  }
+  .code-input { letter-spacing: 0.4em; font-variant-numeric: tabular-nums; }
+  .btn-primary {
+    background: linear-gradient(135deg, #FFC94A, #FFB627);
+    color: #0F0F23;
+    box-shadow: 0 4px 20px rgba(255, 182, 39, 0.35);
+    transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+  }
+  .btn-primary:hover:not(:disabled) {
+    filter: brightness(1.05);
+    box-shadow: 0 6px 28px rgba(255, 182, 39, 0.45);
+  }
+  .btn-primary:active:not(:disabled) { transform: translateY(2px) scale(0.98); }
+  .btn-primary:disabled { opacity: 0.65; cursor: not-allowed; }
+  .logo-badge {
+    background: linear-gradient(135deg, rgba(255,182,39,0.2), rgba(255,182,39,0.05));
+    border: 1px solid rgba(255,182,39,0.25);
+  }
+  .fade-in {
+    animation: fadeIn 0.4s ease-out both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .spinner {
+    width: 1.25rem; height: 1.25rem;
+    border: 2.5px solid rgba(15,15,35,0.25);
+    border-top-color: #0F0F23;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body class="min-h-screen relative overflow-x-hidden">
 <div class="glow"></div>
 
-<main class="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-10">
+<main class="relative z-10 min-h-screen flex flex-col items-center justify-center px-5 py-10">
 
   <!-- الشعار -->
-  <div class="mb-10 text-center">
-    <div class="inline-flex items-center gap-3 mb-2">
-      <span class="text-5xl">🏆</span>
-      <h1 class="text-4xl sm:text-5xl font-black tracking-tight">كويز <span style="color:var(--amber)">أرينا</span></h1>
+  <div class="mb-10 text-center fade-in">
+    <div class="inline-flex items-center gap-3 mb-3">
+      <span class="logo-badge text-4xl sm:text-5xl rounded-2xl w-16 h-16 flex items-center justify-center">🏆</span>
+      <h1 class="text-4xl sm:text-5xl font-black tracking-tight leading-none">
+        كويز <span style="color:var(--amber)">أرينا</span>
+      </h1>
     </div>
-    <p class="text-white/50 text-sm">ادخل الكود من شاشة معلمك وابدأ اللعب</p>
+    <p class="text-sm sm:text-base" style="color:var(--muted)">ادخل الكود من شاشة معلمك وابدأ اللعب فورًا</p>
   </div>
 
   <!-- بطاقة الانضمام -->
-  <form id="joinForm" class="w-full max-w-sm rounded-3xl p-7 space-y-5"
-        style="background:var(--bg-panel); box-shadow: 0 20px 60px rgba(0,0,0,.35);">
+  <form id="joinForm" class="card w-full max-w-sm rounded-3xl p-7 sm:p-8 space-y-5 fade-in" style="animation-delay:0.08s">
 
     <div>
-      <label class="block text-sm text-white/60 mb-2">كود الغرفة</label>
-      <input id="roomCode" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
-             class="code-input w-full text-center text-3xl font-black rounded-2xl py-4 bg-white/5 border-2 border-white/10 focus:border-[var(--amber)] outline-none transition-colors"
+      <label class="block text-sm font-medium mb-2" style="color:var(--muted)">كود الغرفة</label>
+      <input id="roomCode" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6"
+             placeholder="000000" autocomplete="off"
+             class="code-input input-field w-full text-center text-3xl font-black rounded-2xl py-4 outline-none"
              required>
     </div>
 
     <div>
-      <label class="block text-sm text-white/60 mb-2">اسمك</label>
-      <input id="playerName" type="text" maxlength="20" placeholder="مثال: يوسف"
-             class="w-full text-lg rounded-2xl py-3 px-4 bg-white/5 border-2 border-white/10 focus:border-[var(--amber)] outline-none transition-colors"
+      <label class="block text-sm font-medium mb-2" style="color:var(--muted)">اسمك</label>
+      <input id="playerName" type="text" maxlength="20" placeholder="مثال: يوسف" autocomplete="nickname"
+             class="input-field w-full text-lg rounded-2xl py-3.5 px-4 outline-none"
              required>
     </div>
 
-    <p id="errorMsg" class="hidden text-sm text-center rounded-xl py-2 px-3" style="background:rgba(255,107,107,.15); color:var(--coral);"></p>
+    <p id="errorMsg" class="hidden text-sm text-center rounded-xl py-2.5 px-3 font-medium"
+       style="background:rgba(255,107,107,0.12); color:var(--coral);"></p>
 
-    <button type="submit" id="joinBtn" class="btn-press w-full rounded-2xl py-4 text-lg font-bold transition-transform"
-            style="background:var(--amber); color:var(--bg-deep);">
-      انضم للعبة
+    <button type="submit" id="joinBtn"
+            class="btn-primary w-full rounded-2xl py-4 text-lg font-bold flex items-center justify-center gap-2">
+      <span id="btnText">انضم للعبة</span>
+      <span id="btnSpinner" class="spinner hidden"></span>
     </button>
   </form>
 
-  <a href="host.html" class="mt-8 text-white/40 text-sm hover:text-white/70 transition-colors">أنا معلم، عايز أبدأ جلسة →</a>
+  <a href="host.html"
+     class="mt-9 text-sm font-medium transition-colors hover:text-white"
+     style="color:var(--muted)">
+    أنا معلم، عايز أبدأ جلسة ←
+  </a>
 </main>
 
 <script type="module">
@@ -77,16 +142,34 @@
   const form = document.getElementById('joinForm');
   const errorMsg = document.getElementById('errorMsg');
   const joinBtn = document.getElementById('joinBtn');
+  const btnText = document.getElementById('btnText');
+  const btnSpinner = document.getElementById('btnSpinner');
+  const roomInput = document.getElementById('roomCode');
+
+  // تنسيق الكود تلقائيًا (أرقام فقط)
+  roomInput.addEventListener('input', () => {
+    roomInput.value = roomInput.value.replace(/\D/g, '').slice(0, 6);
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg.classList.add('hidden');
 
-    const roomCode = document.getElementById('roomCode').value.trim();
+    const roomCode = roomInput.value.trim();
     const playerName = document.getElementById('playerName').value.trim();
 
+    if (roomCode.length !== 6) {
+      showError("الكود لازم يكون 6 أرقام");
+      return;
+    }
+    if (playerName.length < 2) {
+      showError("الاسم قصير جدًا");
+      return;
+    }
+
     joinBtn.disabled = true;
-    joinBtn.textContent = "جاري الدخول...";
+    btnText.textContent = "جاري الدخول...";
+    btnSpinner.classList.remove('hidden');
 
     try {
       const playerId = await joinRoom(roomCode, playerName);
@@ -97,13 +180,19 @@
     } catch (err) {
       let msg = "حصل خطأ، حاول تاني";
       if (err.message === 'ROOM_NOT_FOUND') msg = "الكود ده مش موجود، اتأكد منه";
-      if (err.message === 'ROOM_ALREADY_STARTED') msg = "اللعبة دي بدأت بالفعل";
-      errorMsg.textContent = msg;
-      errorMsg.classList.remove('hidden');
+      else if (err.message === 'ROOM_ALREADY_STARTED') msg = "اللعبة دي بدأت بالفعل";
+      else if (err.message === 'NAME_TAKEN') msg = "الاسم ده مستخدم، اختار اسم تاني";
+      showError(msg);
       joinBtn.disabled = false;
-      joinBtn.textContent = "انضم للعبة";
+      btnText.textContent = "انضم للعبة";
+      btnSpinner.classList.add('hidden');
     }
   });
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.classList.remove('hidden');
+  }
 </script>
 </body>
 </html>
