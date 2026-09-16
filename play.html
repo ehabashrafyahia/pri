@@ -2,91 +2,204 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0F0F23">
 <title>كويز أرينا — العب</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  :root{
-    --bg-deep:#15152E; --bg-panel:#1F1F42;
-    --amber:#FFB627; --coral:#FF6B6B; --teal:#4ECDC4; --lime:#A8E10C;
-    --ink:#F7F7F2;
+  :root {
+    --bg-deep: #0F0F23;
+    --bg-panel: #1A1A36;
+    --bg-elevated: #242447;
+    --amber: #FFB627;
+    --coral: #FF6B6B;
+    --teal: #4ECDC4;
+    --lime: #A8E10C;
+    --ink: #F7F7F2;
+    --muted: rgba(247, 247, 242, 0.45);
   }
-  html,body{ font-family:'Cairo', sans-serif; background:var(--bg-deep); color:var(--ink); }
-  .glow{ position:fixed; inset:0; z-index:0; pointer-events:none;
-    background: radial-gradient(600px 400px at 15% 10%, rgba(255,182,39,.10), transparent 60%),
-                radial-gradient(500px 400px at 85% 90%, rgba(78,205,196,.10), transparent 60%); }
-  .screen{ display:none; }
-  .screen.active{ display:flex; }
-  .choice-btn{ transition: transform .1s, opacity .2s; }
-  .choice-btn:active{ transform: scale(.96); }
-  .choice-btn.dimmed{ opacity:.3; }
-  .choice-btn.selected{ outline: 4px solid white; }
-  .bounce{ animation: bounce 1.4s ease-in-out infinite; }
-  @keyframes bounce{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } }
+  * { box-sizing: border-box; }
+  html, body {
+    font-family: 'Cairo', system-ui, sans-serif;
+    background: var(--bg-deep);
+    color: var(--ink);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .glow {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 50% at 15% -5%, rgba(255,182,39,0.1), transparent 50%),
+      radial-gradient(ellipse 70% 45% at 90% 105%, rgba(78,205,196,0.1), transparent 50%);
+  }
+  .screen { display: none; opacity: 0; }
+  .screen.active {
+    display: flex;
+    animation: screenIn 0.35s ease-out forwards;
+  }
+  @keyframes screenIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .choice-btn {
+    transition: transform 0.12s, opacity 0.25s, outline 0.15s, filter 0.2s;
+    will-change: transform;
+  }
+  .choice-btn:active:not(.dimmed):not(.selected) { transform: scale(0.96); }
+  .choice-btn.dimmed { opacity: 0.28; pointer-events: none; }
+  .choice-btn.selected {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+    filter: brightness(1.08);
+  }
+  .bounce { animation: bounce 1.5s ease-in-out infinite; }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .pulse-ring {
+    animation: pulseRing 1.8s ease-out infinite;
+  }
+  @keyframes pulseRing {
+    0% { box-shadow: 0 0 0 0 rgba(255,182,39,0.35); }
+    70% { box-shadow: 0 0 0 14px rgba(255,182,39,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,182,39,0); }
+  }
+  /* مؤقت دائري */
+  .timer-wrap {
+    position: relative;
+    width: 52px; height: 52px;
+  }
+  .timer-svg {
+    transform: rotate(-90deg);
+    width: 52px; height: 52px;
+  }
+  .timer-track { stroke: rgba(255,255,255,0.08); }
+  .timer-progress {
+    stroke: var(--amber);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.25s linear, stroke 0.3s;
+  }
+  .timer-progress.urgent { stroke: var(--coral); }
+  .timer-text {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1.05rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .score-pill {
+    background: linear-gradient(135deg, #FFC94A, #FFB627);
+    color: #0F0F23;
+    box-shadow: 0 2px 12px rgba(255,182,39,0.3);
+  }
+  .card {
+    background: var(--bg-panel);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .result-pop {
+    animation: resultPop 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  }
+  @keyframes resultPop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
 </style>
 </head>
 <body class="min-h-screen relative overflow-x-hidden">
 <div class="glow"></div>
 
-<!-- ============ استنى بدء اللعبة ============ -->
+<!-- استنى بدء اللعبة -->
 <section id="screen-waiting" class="screen active relative z-10 min-h-screen flex-col items-center justify-center px-6 text-center">
-  <div class="text-6xl mb-6 bounce">⏳</div>
+  <div class="text-6xl mb-5 bounce">⏳</div>
   <h1 class="text-2xl font-black mb-2">أهلًا <span id="waitingName" style="color:var(--amber)"></span></h1>
-  <p class="text-white/50">استنى المعلم يبدأ اللعبة...</p>
-</section>
-
-<!-- ============ السؤال ============ -->
-<section id="screen-question" class="screen relative z-10 min-h-screen flex-col px-4 py-6">
-  <div class="flex items-center justify-between mb-4">
-    <span id="qCounter" class="text-white/50 font-bold text-sm">سؤال 1</span>
-    <div id="timer" class="text-xl font-black rounded-full w-11 h-11 flex items-center justify-center" style="background:var(--bg-panel);">20</div>
-    <span class="rounded-full px-3 py-1 text-sm font-bold" style="background:var(--amber); color:var(--bg-deep);">⭐ <span id="myScore">0</span></span>
+  <p class="text-base" style="color:var(--muted)">استنى المعلم يبدأ اللعبة...</p>
+  <div class="mt-8 flex gap-1.5">
+    <span class="w-2 h-2 rounded-full bg-white/30 animate-pulse" style="animation-delay:0s"></span>
+    <span class="w-2 h-2 rounded-full bg-white/30 animate-pulse" style="animation-delay:0.2s"></span>
+    <span class="w-2 h-2 rounded-full bg-white/30 animate-pulse" style="animation-delay:0.4s"></span>
   </div>
-  <h2 id="questionText" class="text-xl font-black text-center mb-6 leading-snug">نص السؤال</h2>
-  <div class="grid grid-cols-2 gap-3 flex-1" id="choicesGrid"></div>
 </section>
 
-<!-- ============ بعد الإرسال - استنى النتيجة ============ -->
+<!-- السؤال -->
+<section id="screen-question" class="screen relative z-10 min-h-screen flex-col px-4 py-5 sm:py-6">
+  <div class="flex items-center justify-between mb-5 gap-3">
+    <span id="qCounter" class="text-sm font-bold" style="color:var(--muted)">سؤال 1</span>
+    <div class="timer-wrap">
+      <svg class="timer-svg" viewBox="0 0 52 52">
+        <circle class="timer-track" cx="26" cy="26" r="22" fill="none" stroke-width="4"/>
+        <circle id="timerProgress" class="timer-progress" cx="26" cy="26" r="22" fill="none" stroke-width="4"
+                stroke-dasharray="138.2" stroke-dashoffset="0"/>
+      </svg>
+      <span id="timer" class="timer-text">20</span>
+    </div>
+    <span class="score-pill rounded-full px-3.5 py-1.5 text-sm font-bold">⭐ <span id="myScore">0</span></span>
+  </div>
+  <h2 id="questionText" class="text-xl sm:text-2xl font-black text-center mb-6 leading-snug px-1"></h2>
+  <div class="grid grid-cols-2 gap-3 flex-1 content-start" id="choicesGrid"></div>
+</section>
+
+<!-- بعد الإرسال -->
 <section id="screen-submitted" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 text-center">
-  <div class="text-6xl mb-6 bounce">📨</div>
-  <p class="text-xl font-bold">تم إرسال إجابتك</p>
-  <p class="text-white/50 mt-2">في انتظار باقي الطلاب...</p>
+  <div class="text-6xl mb-5 bounce">📨</div>
+  <p id="submittedTitle" class="text-xl font-bold">تم إرسال إجابتك</p>
+  <p class="mt-2" style="color:var(--muted)">في انتظار باقي الطلاب...</p>
 </section>
 
-<!-- ============ كشف النتيجة ============ -->
+<!-- كشف النتيجة -->
 <section id="screen-reveal" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 text-center">
-  <div id="resultIcon" class="text-7xl mb-4"></div>
-  <p id="resultText" class="text-2xl font-black mb-2"></p>
-  <p id="pointsEarned" class="text-lg mb-6" style="color:var(--amber)"></p>
+  <div id="resultIcon" class="text-7xl mb-3 result-pop"></div>
+  <p id="resultText" class="text-2xl font-black mb-1"></p>
+  <p id="pointsEarned" class="text-lg font-bold mb-7" style="color:var(--amber)"></p>
 
-  <div class="w-full max-w-sm rounded-2xl p-5 space-y-3" style="background:var(--bg-panel);">
-    <div class="flex justify-between"><span class="text-white/50">مجموع نقاطك</span><span id="totalScore" class="font-black" style="color:var(--lime)">0</span></div>
-    <div class="flex justify-between"><span class="text-white/50">ترتيبك الحالي</span><span id="currentRank" class="font-black" style="color:var(--teal)">-</span></div>
+  <div class="card w-full max-w-sm rounded-2xl p-5 space-y-3.5">
+    <div class="flex justify-between items-center">
+      <span style="color:var(--muted)">مجموع نقاطك</span>
+      <span id="totalScore" class="font-black text-lg" style="color:var(--lime)">0</span>
+    </div>
+    <div class="h-px bg-white/8"></div>
+    <div class="flex justify-between items-center">
+      <span style="color:var(--muted)">ترتيبك الحالي</span>
+      <span id="currentRank" class="font-black text-lg" style="color:var(--teal)">-</span>
+    </div>
   </div>
 </section>
 
-<!-- ============ نهاية اللعبة ============ -->
+<!-- نهاية اللعبة -->
 <section id="screen-ended" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 text-center">
   <div class="text-7xl mb-4">🏁</div>
-  <h2 class="text-2xl font-black mb-4">انتهت اللعبة!</h2>
-  <div class="w-full max-w-sm rounded-2xl p-6 space-y-3 mb-6" style="background:var(--bg-panel);">
-    <div class="flex justify-between"><span class="text-white/50">نقاطك النهائية</span><span id="finalScore" class="font-black text-xl" style="color:var(--lime)">0</span></div>
-    <div class="flex justify-between"><span class="text-white/50">ترتيبك النهائي</span><span id="finalRank" class="font-black text-xl" style="color:var(--amber)">-</span></div>
+  <h2 class="text-2xl font-black mb-5">انتهت اللعبة!</h2>
+  <div class="card w-full max-w-sm rounded-2xl p-6 space-y-4 mb-7">
+    <div class="flex justify-between items-center">
+      <span style="color:var(--muted)">نقاطك النهائية</span>
+      <span id="finalScore" class="font-black text-xl" style="color:var(--lime)">0</span>
+    </div>
+    <div class="h-px bg-white/8"></div>
+    <div class="flex justify-between items-center">
+      <span style="color:var(--muted)">ترتيبك النهائي</span>
+      <span id="finalRank" class="font-black text-xl" style="color:var(--amber)">-</span>
+    </div>
   </div>
-  <a href="index.html" class="text-white/50 text-sm hover:text-white/80">العب لعبة تانية →</a>
+  <a href="index.html" class="text-sm font-medium transition-colors hover:text-white" style="color:var(--muted)">
+    العب لعبة تانية ←
+  </a>
 </section>
 
-<!-- ============ خطأ ============ -->
+<!-- خطأ -->
 <section id="screen-error" class="screen relative z-10 min-h-screen flex-col items-center justify-center px-6 text-center">
-  <p class="text-xl font-bold mb-3" style="color:var(--coral)">حصل مشكلة</p>
-  <p id="errorText" class="text-white/50 mb-6">الغرفة اتقفلت أو مش موجودة</p>
-  <a href="index.html" class="rounded-2xl py-3 px-8 font-bold" style="background:var(--amber); color:var(--bg-deep);">ارجع للصفحة الرئيسية</a>
+  <div class="text-5xl mb-4">😕</div>
+  <p class="text-xl font-bold mb-2" style="color:var(--coral)">حصل مشكلة</p>
+  <p id="errorText" class="mb-7" style="color:var(--muted)">الغرفة اتقفلت أو مش موجودة</p>
+  <a href="index.html"
+     class="rounded-2xl py-3.5 px-9 font-bold text-base"
+     style="background:linear-gradient(135deg,#FFC94A,#FFB627); color:#0F0F23;">
+    ارجع للصفحة الرئيسية
+  </a>
 </section>
 
 <script type="module">
-  import { db, ref, onValue, get, submitAnswer, onDisconnect } from "./firebase-config.js";
+  import { db, ref, onValue, get, submitAnswer, onDisconnect, off } from "./firebase-config.js";
 
   const roomCode = sessionStorage.getItem('roomCode');
   const playerId = sessionStorage.getItem('playerId');
@@ -96,21 +209,24 @@
     window.location.href = 'index.html';
   }
 
-  // يشيل اللاعب تلقائيًا لو قفل الصفحة دي فعليًا (مش أثناء الانتقال بين الصفحات)
+  // إزالة اللاعب عند إغلاق الصفحة فعليًا
   onDisconnect(ref(db, `rooms/${roomCode}/players/${playerId}`)).remove();
 
   document.getElementById('waitingName').textContent = playerName || '';
 
   const CHOICE_STYLES = [
-    { color: 'var(--coral)', shape: '▲' },
-    { color: 'var(--teal)',  shape: '●' },
-    { color: 'var(--amber)', shape: '■' },
-    { color: 'var(--lime)',  shape: '◆' },
+    { color: '#FF6B6B', shape: '▲' },
+    { color: '#4ECDC4', shape: '●' },
+    { color: '#FFB627', shape: '■' },
+    { color: '#A8E10C', shape: '◆' },
   ];
+
+  const CIRCUMFERENCE = 2 * Math.PI * 22; // ≈ 138.2
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+    const el = document.getElementById(id);
+    el.classList.add('active');
   }
 
   let lastStatus = null;
@@ -119,9 +235,10 @@
   let timerInterval = null;
   let currentQuestionStartTime = null;
   let currentTimeLimit = 20;
+  let roomListener = null;
 
   const roomRef = ref(db, `rooms/${roomCode}`);
-  onValue(roomRef, (snap) => {
+  roomListener = onValue(roomRef, (snap) => {
     if (!snap.exists()) {
       document.getElementById('errorText').textContent = 'الغرفة اتقفلت أو مش موجودة';
       showScreen('screen-error');
@@ -150,7 +267,9 @@
     } else if (room.status === 'question') {
       hasAnswered = false;
       const q = room.questions[index];
-      currentQuestionStartTime = room.questionStartTime;
+      if (!q) return;
+
+      currentQuestionStartTime = room.questionStartTime || Date.now();
       currentTimeLimit = q.timeLimit || 20;
 
       document.getElementById('qCounter').textContent = `سؤال ${index + 1}`;
@@ -158,15 +277,16 @@
 
       const grid = document.getElementById('choicesGrid');
       grid.innerHTML = q.choices.map((c, i) => `
-        <button data-index="${i}" class="choice-btn rounded-2xl p-4 flex flex-col items-center justify-center gap-2 font-bold text-base"
-                style="background:${CHOICE_STYLES[i].color}; color:var(--bg-deep);">
-          <span class="text-2xl">${CHOICE_STYLES[i].shape}</span>
-          <span>${c}</span>
+        <button data-index="${i}" type="button"
+                class="choice-btn rounded-2xl p-4 min-h-[5.5rem] flex flex-col items-center justify-center gap-2 font-bold text-[0.95rem] sm:text-base leading-tight"
+                style="background:${CHOICE_STYLES[i].color}; color:#0F0F23;">
+          <span class="text-2xl leading-none">${CHOICE_STYLES[i].shape}</span>
+          <span>${escapeHtml(c)}</span>
         </button>
       `).join('');
 
       grid.querySelectorAll('.choice-btn').forEach(btn => {
-        btn.addEventListener('click', () => handleAnswerClick(btn, index));
+        btn.addEventListener('click', () => handleAnswerClick(btn, index), { once: true });
       });
 
       showScreen('screen-question');
@@ -182,21 +302,32 @@
 
   function runCountdown() {
     const timerEl = document.getElementById('timer');
+    const progressEl = document.getElementById('timerProgress');
+    progressEl.style.strokeDasharray = CIRCUMFERENCE;
+
     function tick() {
       const elapsed = (Date.now() - currentQuestionStartTime) / 1000;
-      const remaining = Math.max(0, Math.ceil(currentTimeLimit - elapsed));
-      timerEl.textContent = remaining;
+      const remaining = Math.max(0, currentTimeLimit - elapsed);
+      const display = Math.ceil(remaining);
+      timerEl.textContent = display;
+
+      const offset = CIRCUMFERENCE * (1 - remaining / currentTimeLimit);
+      progressEl.style.strokeDashoffset = offset;
+
+      if (remaining <= 5) progressEl.classList.add('urgent');
+      else progressEl.classList.remove('urgent');
+
       if (remaining <= 0) {
         clearInterval(timerInterval);
         if (!hasAnswered) {
           hasAnswered = true;
+          document.getElementById('submittedTitle').textContent = 'خلص الوقت!';
           showScreen('screen-submitted');
-          document.querySelector('#screen-submitted p').textContent = 'خلص الوقت!';
         }
       }
     }
     tick();
-    timerInterval = setInterval(tick, 300);
+    timerInterval = setInterval(tick, 200);
   }
 
   async function handleAnswerClick(btn, questionIndex) {
@@ -214,15 +345,24 @@
 
     try {
       await submitAnswer(roomCode, questionIndex, playerId, choiceIndex, timeMs);
-    } catch (e) { /* تجاهل، هيتعالج بحساب النقاط كإجابة غير موجودة */ }
+    } catch (_) { /* سيتم التعامل معها كإجابة غير موجودة */ }
 
-    setTimeout(() => showScreen('screen-submitted'), 400);
+    setTimeout(() => {
+      document.getElementById('submittedTitle').textContent = 'تم إرسال إجابتك';
+      showScreen('screen-submitted');
+    }, 350);
   }
 
   async function showReveal(room, index) {
     const q = room.questions[index];
-    const answersSnap = await get(ref(db, `rooms/${roomCode}/answers/${index}`));
-    const answers = answersSnap.val() || {};
+    if (!q) return;
+
+    let answers = {};
+    try {
+      const answersSnap = await get(ref(db, `rooms/${roomCode}/answers/${index}`));
+      answers = answersSnap.val() || {};
+    } catch (_) {}
+
     const myAnswer = answers[playerId];
     const isCorrect = myAnswer && myAnswer.choiceIndex === q.correctIndex;
 
@@ -260,6 +400,18 @@
 
     showScreen('screen-ended');
   }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // تنظيف عند المغادرة
+  window.addEventListener('beforeunload', () => {
+    if (roomListener) off(roomRef);
+    clearInterval(timerInterval);
+  });
 </script>
 </body>
 </html>
